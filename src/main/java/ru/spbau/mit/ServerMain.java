@@ -51,10 +51,13 @@ public final class ServerMain {
         if(serverType==0) {
             tcpServer = new TCPServer(handleType, handlerType);
             new Thread(tcpServer::run).start();
-        }else if(serverType==1)
+        }else if(serverType==1) {
             nioServer = new NIOServer();
-        else if(serverType==2)
+            new Thread(nioServer::run).start();
+        }else if(serverType==2) {
             udpServer = new UDPServer(handleType);
+            new Thread(udpServer::run).start();
+        }
     }
 
     private static void close() {

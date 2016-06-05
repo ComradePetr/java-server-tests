@@ -1,6 +1,0 @@
-Start values:
-N (arraySize) = 10
-M (clientsCount) = 2
-∆ (delay) = 5
-X (requestsCount) = 2
-Change N (arraySize) from 10 to 50 with step 10

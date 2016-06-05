@@ -49,36 +49,33 @@ public class UDPServer {
                     DatagramPacket packet = new DatagramPacket(buf, buf.length);
                     serverSocket.receive(packet);
                     clientTimekeeper.start();
-                    Runnable r = new Runnable() {
-                        @Override
-                        public void run() {
-                            byte[] data = packet.getData();
+                    LOG.info("Server just get something");
+                    Runnable r = () -> {
+                        byte[] data = packet.getData();
 
-                            try (DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(data));
-                                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                                 DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
-                                int size = dataInputStream.readInt();
-                                byte[] byteArray = new byte[size];
-                                dataInputStream.readFully(byteArray);
+                        try (DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(data));
+                             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                             DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
+                            int size = dataInputStream.readInt();
+                            byte[] byteArray = new byte[size];
+                            dataInputStream.readFully(byteArray);
 
-                                requestTimekeeper.start();
-                                List<Integer> array = new ArrayList<>(Protocol.Array.parseFrom(byteArray).getContentList());
-                                LOG.info("Server just read array (size = {})", array.size());
-                                Collections.sort(array);
-                                byteArray = Protocol.Array.newBuilder().addAllContent(array).build().toByteArray();
-                                requestTimekeeper.finish();
+                            requestTimekeeper.start();
+                            List<Integer> array = new ArrayList<>(Protocol.Array.parseFrom(byteArray).getContentList());
+                            LOG.info("Server just read array (size = {})", array.size());
+                            Collections.sort(array);
+                            byteArray = Protocol.Array.newBuilder().addAllContent(array).build().toByteArray();
+                            requestTimekeeper.finish();
 
-                                byteArray = Protocol.Array.newBuilder().addAllContent(array).build().toByteArray();
-                                dataOutputStream.writeInt(byteArray.length);
-                                dataOutputStream.write(byteArray);
-                                dataOutputStream.flush();
-                                data = byteArrayOutputStream.toByteArray();
-                                DatagramPacket packetResponse = new DatagramPacket(data, data.length, packet.getAddress(), packet.getPort());
-                                serverSocket.send(packetResponse);
-                                clientTimekeeper.finish();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            dataOutputStream.writeInt(byteArray.length);
+                            dataOutputStream.write(byteArray);
+                            dataOutputStream.flush();
+                            data = byteArrayOutputStream.toByteArray();
+                            DatagramPacket packetResponse = new DatagramPacket(data, data.length, packet.getAddress(), packet.getPort());
+                            serverSocket.send(packetResponse);
+                            clientTimekeeper.finish();
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
                     };
                     if(handleType==HANDLE_FIXED_POOL)

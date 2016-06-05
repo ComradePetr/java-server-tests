@@ -52,31 +52,31 @@ public final class ServerTestsMain {
         JRadioButton nButton = new JRadioButton(values[0] + ":");
         group.add(nButton);
         options.add(nButton);
-        JTextField arraySize = new JTextField();
+        JTextField arraySize = new JTextField("10");
         options.add(arraySize);
 
         JRadioButton mButton = new JRadioButton(values[1] + ":");
         group.add(mButton);
         options.add(mButton);
-        JTextField clientsCount = new JTextField();
+        JTextField clientsCount = new JTextField("2");
         options.add(clientsCount);
 
         JRadioButton dButton = new JRadioButton(values[2] + ":");
         group.add(dButton);
         options.add(dButton);
-        JTextField delay = new JTextField();
+        JTextField delay = new JTextField("100");
         options.add(delay);
 
         options.add(new JLabel(values[3] + ":"));
-        JTextField requestsCount = new JTextField();
+        JTextField requestsCount = new JTextField("4");
         options.add(requestsCount);
 
         options.add(new JLabel("Upper bound:"));
-        JTextField upperBound = new JTextField();
+        JTextField upperBound = new JTextField("50");
         options.add(upperBound);
 
         options.add(new JLabel("Step:"));
-        JTextField step = new JTextField();
+        JTextField step = new JTextField("10");
         options.add(step);
 
         options.add(new JLabel("Server's IP:"));
