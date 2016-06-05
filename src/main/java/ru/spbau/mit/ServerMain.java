@@ -34,9 +34,17 @@ public final class ServerMain {
                         open(handleType, handlerType, serverType);
                         dataOutputStream.writeInt(0);
                     } else {
-                        dataOutputStream.writeDouble(tcpServer.requestHandleTime());
-                        dataOutputStream.writeDouble(tcpServer.clientHandleTime());
-                        tcpServer.close();
+                        if(serverType == 0) {
+                            dataOutputStream.writeDouble(tcpServer.requestHandleTime());
+                            dataOutputStream.writeDouble(tcpServer.clientHandleTime());
+                        }else if(serverType==1){
+                            dataOutputStream.writeDouble(nioServer.requestHandleTime());
+                            dataOutputStream.writeDouble(nioServer.clientHandleTime());
+                        }else {
+                            dataOutputStream.writeDouble(udpServer.requestHandleTime());
+                            dataOutputStream.writeDouble(udpServer.clientHandleTime());
+                        }
+                        close();
                     }
                     dataOutputStream.flush();
                 }

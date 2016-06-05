@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,6 +21,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public final class ServerTestsMain {
+    private static final Logger LOG = LogManager.getLogger(ServerTestsMain.class);
     private static double requestHandleTime, clientHandleTime, clientTime;
     private static final String values[] = new String[]{"N (arraySize)", "M (clientsCount)", "∆ (delay)", "X (requestsCount)"};
     private static XYChart<Number, Number> chart;
@@ -168,8 +171,9 @@ public final class ServerTestsMain {
         try (PrintWriter requestHandleFile = new PrintWriter("output-requestHandle.txt");
              PrintWriter clientHandleFile = new PrintWriter("output-clientHandle.txt");
              PrintWriter clientFile = new PrintWriter("output-client.txt")) {
-            Integer changing = Config.values[number];
+            int changing = Config.values[number];
             for (; changing <= upperBound; changing += step) {
+                Config.set(number, changing);
                 sendToServer(ServerMain.REQUEST_OPEN, handleType, handlerType, serverType);
                 final ExecutorService taskExecutor = Executors.newCachedThreadPool();
                 Future<Long> results[] = new Future[Config.clientsCount];
@@ -178,13 +182,15 @@ public final class ServerTestsMain {
                         Timekeeper clientTimekeeper = new Timekeeper();
                         clientTimekeeper.start();
 
-                        if(serverType==0 || serverType==1) {
-                            if (handlerType == TCPServer.HANDLER_CONNECTION_PER_CLIENT)
+                        if (serverType == 0 || serverType == 1) {
+                            if (handlerType == TCPServer.HANDLER_CONNECTION_PER_CLIENT) {
                                 new OneConnectionTCPClient().run();
-                            else
+                            } else {
                                 new ConnectionPerRequestTCPClient().run();
-                        }else
+                            }
+                        } else {
                             new UDPClient().run();
+                        }
 
                         clientTimekeeper.finish();
                         return clientTimekeeper.getSum();
@@ -201,7 +207,7 @@ public final class ServerTestsMain {
                     }
                 }
                 sendToServer(ServerMain.REQUEST_CLOSE, -1, -1, 0);
-                clientTime = sum / Config.clientsCount;
+                clientTime = (double)sum / Config.clientsCount;
 
                 requestHandleTimes.add(new XYChart.Data<>(changing, requestHandleTime));
                 requestHandleFile.printf("%d\t%f\n", changing, requestHandleTime);
@@ -229,6 +235,7 @@ public final class ServerTestsMain {
     }
 
     private static void sendToServer(int type, int handleType, int handlerType, int serverType) {
+        LOG.info("sendToServer {} {} {} {}", type, handleType, handlerType, serverType);
         try (Socket socket = new Socket(Config.serverAddress, Config.MAIN_SERVER_PORT);
              DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
              DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream())) {

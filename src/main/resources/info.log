@@ -1,0 +1,13 @@
+2016-06-05 16:35:51.063 [Thread-6] INFO  ru.spbau.mit.ServerTestsMain - sendToServer 0 2 0 2
+2016-06-05 16:35:51.212 [pool-3-thread-1] INFO  ru.spbau.mit.UDPClient - I send array (size = 10)
+2016-06-05 16:35:51.212 [pool-3-thread-2] INFO  ru.spbau.mit.UDPClient - I send array (size = 10)
+2016-06-05 16:35:51.248 [pool-3-thread-2] INFO  ru.spbau.mit.UDPClient - length = 50
+2016-06-05 16:35:51.248 [pool-3-thread-1] INFO  ru.spbau.mit.UDPClient - length = 50
+2016-06-05 16:35:51.333 [pool-3-thread-1] INFO  ru.spbau.mit.UDPClient - Array (size = 10) is ok
+2016-06-05 16:35:51.333 [pool-3-thread-2] INFO  ru.spbau.mit.UDPClient - Array (size = 10) is ok
+2016-06-05 16:35:51.334 [Thread-6] INFO  ru.spbau.mit.ServerTestsMain - sendToServer 1 -1 -1 0
+2016-06-05 16:35:51.344 [Thread-6] INFO  ru.spbau.mit.ServerTestsMain - sendToServer 0 2 0 2
+2016-06-05 16:35:51.349 [pool-4-thread-2] INFO  ru.spbau.mit.UDPClient - I send array (size = 20)
+2016-06-05 16:35:51.350 [pool-4-thread-2] INFO  ru.spbau.mit.UDPClient - length = 100
+2016-06-05 16:35:51.351 [pool-4-thread-1] INFO  ru.spbau.mit.UDPClient - I send array (size = 20)
+2016-06-05 16:35:51.351 [pool-4-thread-1] INFO  ru.spbau.mit.UDPClient - length = 100

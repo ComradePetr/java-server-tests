@@ -4,18 +4,14 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.*;
-import java.lang.reflect.InvocationTargetException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class UDPServer {
     public static final int HANDLE_TYPES_COUNT = 3;
@@ -28,7 +24,7 @@ public class UDPServer {
 
     private final int handleType;
 
-    private static final Logger LOG = LogManager.getLogger(UDPClient.class);
+    private static final Logger LOG = LogManager.getLogger(UDPServer.class);
 
     private final ExecutorService taskExecutor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
     private final Timekeeper requestTimekeeper = new Timekeeper(), clientTimekeeper = new Timekeeper();
@@ -49,14 +45,13 @@ public class UDPServer {
                     DatagramPacket packet = new DatagramPacket(buf, buf.length);
                     serverSocket.receive(packet);
                     clientTimekeeper.start();
-                    LOG.info("Server just get something");
                     Runnable r = () -> {
                         byte[] data = packet.getData();
-
                         try (DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(data));
                              ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                              DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
                             int size = dataInputStream.readInt();
+                            LOG.info(size);
                             byte[] byteArray = new byte[size];
                             dataInputStream.readFully(byteArray);
 
@@ -74,14 +69,18 @@ public class UDPServer {
                             DatagramPacket packetResponse = new DatagramPacket(data, data.length, packet.getAddress(), packet.getPort());
                             serverSocket.send(packetResponse);
                             clientTimekeeper.finish();
+                            LOG.info("Server just send sorted array (size = {})", array.size());
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     };
-                    if(handleType==HANDLE_FIXED_POOL)
+                    if (handleType == HANDLE_FIXED_POOL) {
                         taskExecutor.execute(r);
-                    else
+                    } else {
                         new Thread(r).start();
+                    }
+                } catch (SocketException e) {
+                    return;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

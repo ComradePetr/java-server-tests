@@ -11,6 +11,24 @@ public final class Config {
         values = new Integer[]{arraySize, clientsCount, delay, requestsCount};
     }
 
+    public static void set(int k, int v) {
+        switch (k) {
+            case 0:
+                arraySize = v;
+                break;
+            case 1:
+                clientsCount = v;
+                break;
+            case 2:
+                delay = v;
+                break;
+            case 3:
+                requestsCount = v;
+                break;
+        }
+        reloadValues();
+    }
+
     private Config() {
     }
 }
