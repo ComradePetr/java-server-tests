@@ -1,0 +1,36 @@
+2016-06-05 13:52:34.586 [pool-2-thread-2] INFO  ru.spbau.mit.OneConnectionTCPClient - I send array (size = 10)
+2016-06-05 13:52:34.588 [pool-2-thread-2] INFO  ru.spbau.mit.OneConnectionTCPClient - I got sorted array
+2016-06-05 13:52:34.593 [pool-2-thread-2] INFO  ru.spbau.mit.OneConnectionTCPClient - I send array (size = 10)
+2016-06-05 13:52:34.593 [pool-2-thread-2] INFO  ru.spbau.mit.OneConnectionTCPClient - I got sorted array
+2016-06-05 13:52:34.610 [pool-4-thread-1] INFO  ru.spbau.mit.OneConnectionTCPClient - I send array (size = 10)
+2016-06-05 13:52:34.624 [pool-4-thread-1] INFO  ru.spbau.mit.OneConnectionTCPClient - I got sorted array
+2016-06-05 13:52:34.630 [pool-4-thread-1] INFO  ru.spbau.mit.OneConnectionTCPClient - I send array (size = 10)
+2016-06-05 13:52:34.631 [pool-4-thread-1] INFO  ru.spbau.mit.OneConnectionTCPClient - I got sorted array
+2016-06-05 13:52:35.107 [pool-4-thread-2] INFO  ru.spbau.mit.OneConnectionTCPClient - I send array (size = 10)
+2016-06-05 13:52:35.136 [pool-4-thread-2] INFO  ru.spbau.mit.OneConnectionTCPClient - I got sorted array
+2016-06-05 13:52:35.146 [pool-4-thread-2] INFO  ru.spbau.mit.OneConnectionTCPClient - I send array (size = 10)
+2016-06-05 13:52:35.150 [pool-4-thread-2] INFO  ru.spbau.mit.OneConnectionTCPClient - I got sorted array
+2016-06-05 13:52:35.181 [pool-5-thread-2] INFO  ru.spbau.mit.OneConnectionTCPClient - I send array (size = 10)
+2016-06-05 13:52:35.184 [pool-5-thread-2] INFO  ru.spbau.mit.OneConnectionTCPClient - I got sorted array
+2016-06-05 13:52:35.205 [pool-5-thread-2] INFO  ru.spbau.mit.OneConnectionTCPClient - I send array (size = 10)
+2016-06-05 13:52:35.206 [pool-5-thread-2] INFO  ru.spbau.mit.OneConnectionTCPClient - I got sorted array
+2016-06-05 13:52:35.682 [pool-5-thread-1] INFO  ru.spbau.mit.OneConnectionTCPClient - I send array (size = 10)
+2016-06-05 13:52:35.684 [pool-5-thread-1] INFO  ru.spbau.mit.OneConnectionTCPClient - I got sorted array
+2016-06-05 13:52:35.692 [pool-5-thread-1] INFO  ru.spbau.mit.OneConnectionTCPClient - I send array (size = 10)
+2016-06-05 13:52:35.694 [pool-5-thread-1] INFO  ru.spbau.mit.OneConnectionTCPClient - I got sorted array
+2016-06-05 13:52:35.772 [pool-6-thread-1] INFO  ru.spbau.mit.OneConnectionTCPClient - I send array (size = 10)
+2016-06-05 13:52:35.785 [pool-6-thread-2] INFO  ru.spbau.mit.OneConnectionTCPClient - I send array (size = 10)
+2016-06-05 13:52:35.785 [pool-6-thread-1] INFO  ru.spbau.mit.OneConnectionTCPClient - I got sorted array
+2016-06-05 13:52:35.795 [pool-6-thread-1] INFO  ru.spbau.mit.OneConnectionTCPClient - I send array (size = 10)
+2016-06-05 13:52:35.796 [pool-6-thread-1] INFO  ru.spbau.mit.OneConnectionTCPClient - I got sorted array
+2016-06-05 13:52:35.800 [pool-6-thread-2] INFO  ru.spbau.mit.OneConnectionTCPClient - I got sorted array
+2016-06-05 13:52:35.805 [pool-6-thread-2] INFO  ru.spbau.mit.OneConnectionTCPClient - I send array (size = 10)
+2016-06-05 13:52:35.807 [pool-6-thread-2] INFO  ru.spbau.mit.OneConnectionTCPClient - I got sorted array
+2016-06-05 13:52:35.873 [pool-7-thread-2] INFO  ru.spbau.mit.OneConnectionTCPClient - I send array (size = 10)
+2016-06-05 13:52:35.876 [pool-7-thread-2] INFO  ru.spbau.mit.OneConnectionTCPClient - I got sorted array
+2016-06-05 13:52:35.878 [pool-7-thread-1] INFO  ru.spbau.mit.OneConnectionTCPClient - I send array (size = 10)
+2016-06-05 13:52:35.881 [pool-7-thread-2] INFO  ru.spbau.mit.OneConnectionTCPClient - I send array (size = 10)
+2016-06-05 13:52:35.882 [pool-7-thread-2] INFO  ru.spbau.mit.OneConnectionTCPClient - I got sorted array
+2016-06-05 13:52:35.888 [pool-7-thread-1] INFO  ru.spbau.mit.OneConnectionTCPClient - I got sorted array
+2016-06-05 13:52:35.896 [pool-7-thread-1] INFO  ru.spbau.mit.OneConnectionTCPClient - I send array (size = 10)
+2016-06-05 13:52:35.906 [pool-7-thread-1] INFO  ru.spbau.mit.OneConnectionTCPClient - I got sorted array
