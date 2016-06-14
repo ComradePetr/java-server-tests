@@ -1,40 +1,14 @@
 package ru.spbau.mit;
 
-import ru.spbau.mit.clients.Client;
-import ru.spbau.mit.clients.TCPConnectionPerRequestClient;
-import ru.spbau.mit.clients.TCPOneConnectionClient;
-import ru.spbau.mit.clients.UDPClient;
-import ru.spbau.mit.servers.*;
-
-import java.util.function.Function;
-import java.util.function.Supplier;
+import ru.spbau.mit.architecture.Architecture;
+import ru.spbau.mit.architecture.ClientType;
+import ru.spbau.mit.architecture.RunnerType;
+import ru.spbau.mit.architecture.ServerType;
 
 public final class Config {
     public static final int MAIN_SERVER_PORT = 17238, SERVER_PORT = 17239;
     public static final int FIXED_THREAD_POOL_SIZE = 4;
     public static final int UDP_PACKET_MAX_SIZE = 1024, UDP_TIMEOUT = 1000;
-
-    public enum ServerType {
-        TCP(TCPServer::new), NIO(NIOServer::new), UDP(UDPServer::new);
-
-        Function<RunnerType, Server> constructor;
-
-        ServerType(Function<RunnerType, Server> constructor) {
-            this.constructor = constructor;
-        }
-    }
-
-    public enum ClientType {
-        TCPConnectionPerRequest(TCPConnectionPerRequestClient::new),
-        TCPOneConnection(TCPOneConnectionClient::new),
-        UDP(UDPClient::new);
-
-        Supplier<Client> constructor;
-
-        ClientType(Supplier<Client> constructor) {
-            this.constructor = constructor;
-        }
-    }
 
     public static final Architecture architectures[] = new Architecture[]{
             new Architecture(ServerType.TCP, RunnerType.MANY_THREADS, ClientType.TCPOneConnection),

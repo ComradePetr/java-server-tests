@@ -1,14 +1,12 @@
-package ru.spbau.mit;
-
-import ru.spbau.mit.servers.RunnerType;
+package ru.spbau.mit.architecture;
 
 public class Architecture {
     public final String name;
-    public final Config.ServerType serverType;
+    public final ServerType serverType;
     public final RunnerType runnerType;
-    public final Config.ClientType clientType;
+    public final ClientType clientType;
 
-    public Architecture(Config.ServerType serverType, RunnerType runnerType, Config.ClientType clientType) {
+    public Architecture(ServerType serverType, RunnerType runnerType, ClientType clientType) {
         this.name = String.format("%s with %s, clientType = %s",
                 serverType.toString(), runnerType.toString(), clientType.toString());
         this.serverType = serverType;

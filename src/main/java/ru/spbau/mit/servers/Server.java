@@ -4,13 +4,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.spbau.mit.Protocol;
 import ru.spbau.mit.Timekeeper;
+import ru.spbau.mit.architecture.RunnerType;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 public abstract class Server {
     protected final RunnerType runnerType;

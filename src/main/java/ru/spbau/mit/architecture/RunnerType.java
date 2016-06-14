@@ -1,4 +1,4 @@
-package ru.spbau.mit.servers;
+package ru.spbau.mit.architecture;
 
 import ru.spbau.mit.ServerMain;
 
@@ -16,7 +16,7 @@ public enum RunnerType {
         this.runner = runner;
     }
 
-    void run(Runnable runnable) {
+    public void run(Runnable runnable) {
         runner.accept(runnable);
     }
 }

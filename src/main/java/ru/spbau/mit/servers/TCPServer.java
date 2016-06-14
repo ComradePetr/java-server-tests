@@ -4,6 +4,7 @@ import com.google.common.base.Throwables;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.spbau.mit.Config;
+import ru.spbau.mit.architecture.RunnerType;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

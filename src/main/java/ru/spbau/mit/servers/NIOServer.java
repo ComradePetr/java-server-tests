@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.spbau.mit.Config;
 import ru.spbau.mit.Protocol;
+import ru.spbau.mit.architecture.RunnerType;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
