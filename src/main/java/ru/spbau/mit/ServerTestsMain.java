@@ -14,17 +14,19 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
+import java.util.*;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 public final class ServerTestsMain {
     private static final Logger LOG = LogManager.getLogger(ServerTestsMain.class);
-    private static double requestHandleTime, clientHandleTime, clientTime;
-    private static final String values[] = new String[]{"N (arraySize)", "M (clientsCount)", "∆ (delay)", "X (requestsCount)"};
-    private static XYChart<Number, Number> chart;
+    private static double requestHandleTime, clientHandleTime;
+    private static Architecture architecture;
+    private static XYChart<Number, Number> charts[] = new XYChart[3];
 
     public static void main(String[] args) throws InterruptedException, ExecutionException {
         JFrame frame = new JFrame("ServerTests");
@@ -41,129 +43,99 @@ public final class ServerTestsMain {
 
     private static JPanel createGraph() {
         JPanel chartPanel = new JPanel();
-        JFXPanel jfxPanel = new JFXPanel();
-        jfxPanel.setScene(new Scene(chart = new LineChart<>(new NumberAxis(), new NumberAxis())));
-        chartPanel.add(jfxPanel);
+        for (int i = 0; i < charts.length; i++) {
+            JFXPanel jfxPanel = new JFXPanel();
+            jfxPanel.setScene(new Scene(charts[i] = new LineChart<>(new NumberAxis(), new NumberAxis())));
+            chartPanel.add(jfxPanel);
+        }
         return chartPanel;
+    }
+
+    private static JTextField addParameter(JPanel options, ButtonGroup group, String name,
+                                           String value, boolean selected) {
+        JRadioButton button = new JRadioButton(name, selected);
+        group.add(button);
+        options.add(button);
+        JTextField field = new JTextField(value);
+        options.add(field);
+        return field;
+    }
+
+    private static JTextField addParameter(JPanel options, String name, String value) {
+        options.add(new JLabel(name));
+        JTextField field = new JTextField(value);
+        options.add(field);
+        return field;
     }
 
     private static JPanel createOptions() {
         JPanel options = new JPanel(new GridLayout(10, 6));
-
         ButtonGroup group = new ButtonGroup();
 
-        JRadioButton nButton = new JRadioButton(values[0] + ":");
-        group.add(nButton);
-        options.add(nButton);
-        JTextField arraySize = new JTextField("10");
-        options.add(arraySize);
+        JTextField arraySize = addParameter(options, group, Config.parameters[0].getName(), "10", true);
+        JTextField clientsCount = addParameter(options, group, Config.parameters[1].getName(), "2", false);
+        JTextField delay = addParameter(options, group, Config.parameters[2].getName(), "100", false);
+        JTextField requestsCount = addParameter(options, group, Config.parameters[3].getName(), "4", false);
 
-        JRadioButton mButton = new JRadioButton(values[1] + ":");
-        group.add(mButton);
-        options.add(mButton);
-        JTextField clientsCount = new JTextField("2");
-        options.add(clientsCount);
-
-        JRadioButton dButton = new JRadioButton(values[2] + ":");
-        group.add(dButton);
-        options.add(dButton);
-        JTextField delay = new JTextField("100");
-        options.add(delay);
-
-        options.add(new JLabel(values[3] + ":"));
-        JTextField requestsCount = new JTextField("4");
-        options.add(requestsCount);
-
-        options.add(new JLabel("Upper bound:"));
-        JTextField upperBound = new JTextField("50");
-        options.add(upperBound);
-
-        options.add(new JLabel("Step:"));
-        JTextField step = new JTextField("10");
-        options.add(step);
-
-        options.add(new JLabel("Server's IP:"));
-        JTextField serverAddress = new JTextField("127.0.0.1");
-        options.add(serverAddress);
+        JTextField upperBoundField = addParameter(options, "Upper bound", "50");
+        JTextField stepField = addParameter(options, "Step", "10");
+        JTextField serverAddress = addParameter(options, "Server's IP", "127.0.0.1");
 
         JButton startButton = new JButton("Start");
         options.add(startButton);
 
-        JComboBox<String> jComboBox = new JComboBox<>(new String[]{
-                "TCP-one-thread",
-                "TCP-one-cachedpool",
-                "TCP-nonblocking",
-                "TCP-each-request-onethread",
-                "UDP-thread",
-                "UDP-fixpool"
-        });
+        JComboBox<String> jComboBox = new JComboBox<>(
+                new Vector<>(Arrays.stream(Config.architectures).map(Architecture::getName).collect(Collectors.toList()))
+        );
         options.add(jComboBox);
 
         startButton.addActionListener((e) -> {
-            Config.arraySize = Integer.parseInt(arraySize.getText());
-            Config.clientsCount = Integer.parseInt(clientsCount.getText());
-            Config.delay = Integer.parseInt(delay.getText());
-            Config.requestsCount = Integer.parseInt(requestsCount.getText());
+            Config.arraySize.set(arraySize.getText());
+            Config.clientsCount.set(clientsCount.getText());
+            Config.delay.set(delay.getText());
+            Config.requestsCount.set(requestsCount.getText());
             Config.serverAddress = serverAddress.getText();
-            int handleType, handlerType, serverType;
-            switch (jComboBox.getSelectedIndex()) {
-                case 0:
-                    handleType = TCPServer.HANDLE_MANY_THREADS;
-                    handlerType = TCPServer.HANDLER_CONNECTION_PER_CLIENT;
-                    serverType = 0;
+            int toChangeId = 0;
+            for (Enumeration<AbstractButton> buttons = group.getElements(); buttons.hasMoreElements(); toChangeId++) {
+                AbstractButton button = buttons.nextElement();
+                if (button.isSelected()) {
                     break;
-                case 1:
-                    handleType = TCPServer.HANDLE_CACHED_POOL;
-                    handlerType = TCPServer.HANDLER_CONNECTION_PER_CLIENT;
-                    serverType = 0;
-                    break;
-                case 2:
-                    handleType = 0;
-                    handlerType = 1;
-                    serverType = 1;
-                    break;
-                case 3:
-                    handleType = TCPServer.HANDLE_MAIN_THREAD;
-                    handlerType = TCPServer.HANDLER_CONNECTION_PER_REQUEST;
-                    serverType = 0;
-                    break;
-                case 4:
-                    handleType = UDPServer.HANDLE_MANY_THREADS;
-                    handlerType = 0;
-                    serverType = 2;
-                    break;
-                case 5:
-                    handleType = UDPServer.HANDLE_FIXED_POOL;
-                    handlerType = 0;
-                    serverType = 2;
-                    break;
-                default:
-                    throw new UnsupportedOperationException();
+                }
             }
-            new Thread(() -> start(
-                    nButton.isSelected() ? 0 : mButton.isSelected() ? 1 : 2,
-                    Integer.valueOf(step.getText()),
-                    Integer.valueOf(upperBound.getText()),
-                    handleType, handlerType, serverType
-            )
-            ).start();
+            final Config.Parameter toChange = Config.parameters[toChangeId];
+            final int step = Integer.valueOf(stepField.getText()),
+                    upperBound = Integer.valueOf(upperBoundField.getText());
+            architecture = Config.architectures[jComboBox.getSelectedIndex()];
+            new Thread(() -> {
+                try {
+                    start(toChange, step, upperBound);
+                } catch (FileNotFoundException e1) {
+                    e1.printStackTrace();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }).start();
         });
 
         return options;
     }
 
-    private static void start(int number, int step, int upperBound, int handleType, int handlerType, int serverType) {
-        Config.reloadValues();
+    private static void updateGraph(int id, String name, ArrayList<XYChart.Data<Number, Double>> data) {
+        charts[id].setData(FXCollections.observableArrayList(
+                new XYChart.Series(name, FXCollections.observableArrayList(data)))
+        );
+    }
+
+    private static void start(Config.Parameter toChange, int step, int upperBound)
+            throws IOException {
         try (PrintWriter description = new PrintWriter("output-description.txt")) {
             description.println("Start values:");
 
-            for (int i = 0; i < values.length; i++) {
-                description.printf("%s = %d\n", values[i], Config.values[i]);
+            for (Config.Parameter parameter : Config.parameters) {
+                description.printf("%s = %d\n", parameter.getName(), parameter.get());
             }
             description.printf("Change %s from %d to %d with step %d\n",
-                    values[number], Config.values[number], upperBound, step);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+                    toChange.getName(), toChange.get(), upperBound, step);
         }
 
         ArrayList<XYChart.Data<Number, Double>> requestHandleTimes = new ArrayList<>(),
@@ -171,60 +143,48 @@ public final class ServerTestsMain {
         try (PrintWriter requestHandleFile = new PrintWriter("output-requestHandle.txt");
              PrintWriter clientHandleFile = new PrintWriter("output-clientHandle.txt");
              PrintWriter clientFile = new PrintWriter("output-client.txt")) {
-            int changing = Config.values[number];
-            for (; changing <= upperBound; changing += step) {
-                Config.set(number, changing);
-                sendToServer(ServerMain.REQUEST_OPEN, handleType, handlerType, serverType);
+            int changingValue = toChange.get();
+            for (; changingValue <= upperBound; changingValue += step) {
+                toChange.set(changingValue);
+                sendToServer(ServerMain.REQUEST_OPEN);
                 final ExecutorService taskExecutor = Executors.newCachedThreadPool();
-                Future<Long> results[] = new Future[Config.clientsCount];
-                for (int i = 0; i < Config.clientsCount; i++) {
-                    results[i] = taskExecutor.submit(() -> {
+                List<Future<Long>> results = new ArrayList<>();
+                for (int i = 0; i < Config.clientsCount.get(); i++) {
+                    results.add(taskExecutor.submit(() -> {
                         Timekeeper clientTimekeeper = new Timekeeper();
-                        clientTimekeeper.start();
-
-                        if (serverType == 0 || serverType == 1) {
-                            if (handlerType == TCPServer.HANDLER_CONNECTION_PER_CLIENT) {
-                                new OneConnectionTCPClient().run();
-                            } else {
-                                new ConnectionPerRequestTCPClient().run();
-                            }
-                        } else {
-                            new UDPClient().run();
-                        }
-
-                        clientTimekeeper.finish();
+                        int timerId = clientTimekeeper.start();
+                        architecture.clientType.constructor.get().run();
+                        clientTimekeeper.finish(timerId);
                         return clientTimekeeper.getSum();
-                    });
+                    }));
                 }
                 taskExecutor.shutdown();
 
                 long sum = 0;
-                for (int i = 0; i < Config.clientsCount; i++) {
+                for (int i = 0; i < Config.clientsCount.get(); i++) {
                     try {
-                        sum += results[i].get();
+                        sum += results.get(i).get();
                     } catch (InterruptedException | ExecutionException e) {
                         e.printStackTrace();
                     }
                 }
-                sendToServer(ServerMain.REQUEST_CLOSE, -1, -1, 0);
-                clientTime = (double)sum / Config.clientsCount;
+                sendToServer(ServerMain.REQUEST_CLOSE);
+                double clientTime = (double) sum / Config.clientsCount.get();
 
-                requestHandleTimes.add(new XYChart.Data<>(changing, requestHandleTime));
-                requestHandleFile.printf("%d\t%f\n", changing, requestHandleTime);
+                requestHandleTimes.add(new XYChart.Data<>(changingValue, requestHandleTime));
+                requestHandleFile.printf("%d\t%f\n", changingValue, requestHandleTime);
 
-                clientHandleTimes.add(new XYChart.Data<>(changing, clientHandleTime));
-                clientHandleFile.printf("%d\t%f\n", changing, clientHandleTime);
+                clientHandleTimes.add(new XYChart.Data<>(changingValue, clientHandleTime));
+                clientHandleFile.printf("%d\t%f\n", changingValue, clientHandleTime);
 
-                clientTimes.add(new XYChart.Data<>(changing, clientTime));
-                clientFile.printf("%d\t%f\n", changing, clientTime);
+                clientTimes.add(new XYChart.Data<>(changingValue, clientTime));
+                clientFile.printf("%d\t%f\n", changingValue, clientTime);
 
-                Platform.runLater(() ->
-                        chart.setData(FXCollections.observableArrayList(
-                                new XYChart.Series("requestHandleTime", FXCollections.observableArrayList(requestHandleTimes)),
-                                new XYChart.Series("clientHandleTime", FXCollections.observableArrayList(clientHandleTimes)),
-                                new XYChart.Series("clientTime", FXCollections.observableArrayList(clientTimes))
-                        ))
-                );
+                Platform.runLater(() -> {
+                    updateGraph(0, "requestHandleTime", requestHandleTimes);
+                    updateGraph(1, "clientHandleTime", clientHandleTimes);
+                    updateGraph(2, "clientTime", clientTimes);
+                });
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -234,28 +194,25 @@ public final class ServerTestsMain {
     private ServerTestsMain() {
     }
 
-    private static void sendToServer(int type, int handleType, int handlerType, int serverType) {
-        LOG.info("sendToServer {} {} {} {}", type, handleType, handlerType, serverType);
+    private static void sendToServer(int requestType) throws IOException {
+        LOG.info("sendToServer {} {}", requestType, architecture.getName());
         try (Socket socket = new Socket(Config.serverAddress, Config.MAIN_SERVER_PORT);
              DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
              DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream())) {
-            dataOutputStream.writeInt(type);
-            if (type == ServerMain.REQUEST_OPEN) {
-                dataOutputStream.writeInt(handleType);
-                dataOutputStream.writeInt(handlerType);
-                dataOutputStream.writeInt(serverType);
+            dataOutputStream.writeInt(requestType);
+            if (requestType == ServerMain.REQUEST_OPEN) {
+                dataOutputStream.writeInt(architecture.serverType.ordinal());
+                dataOutputStream.writeInt(architecture.runnerType.ordinal());
             }
             dataOutputStream.flush();
-            if (type == ServerMain.REQUEST_OPEN) {
-                if (dataInputStream.readInt() != 0) {
+            if (requestType == ServerMain.REQUEST_OPEN) {
+                if (dataInputStream.readInt() != ServerMain.CONFIRM_SIGNAL) {
                     throw new IllegalStateException();
                 }
             } else {
                 requestHandleTime = dataInputStream.readDouble();
                 clientHandleTime = dataInputStream.readDouble();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

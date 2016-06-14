@@ -1,7 +1,9 @@
-package ru.spbau.mit;
+package ru.spbau.mit.servers;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.spbau.mit.Config;
+import ru.spbau.mit.Protocol;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -10,20 +12,16 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-public class NIOServer {
+public class NIOServer extends Server {
     private final Logger LOG = LogManager.getLogger(this);
-    private final int THREAD_POOL_SIZE = 4;
+    private ServerSocketChannel serverChannel;
 
-    private final ExecutorService taskExecutor = Executors.newFixedThreadPool(THREAD_POOL_SIZE);
-    private final Timekeeper requestTimekeeper = new Timekeeper(), clientTimekeeper = new Timekeeper();
-    ServerSocketChannel serverChannel;
-
-    public NIOServer() {
+    public NIOServer(RunnerType runnerType) {
+        super(runnerType);
     }
 
+    @Override
     public void run() {
         LOG.info("I will occupy {}", Config.SERVER_PORT);
         try {
@@ -33,8 +31,8 @@ public class NIOServer {
             while (serverChannel.isOpen()) {
                 SocketChannel socketChannel = serverChannel.accept();
                 if (socketChannel != null) {
-                    taskExecutor.submit(() -> {
-                        clientTimekeeper.start();
+                    runnerType.run(() -> {
+                        int clientTimerId = clientTimekeeper.start();
                         try {
                             ByteBuffer sizeBuf = ByteBuffer.allocate(Integer.BYTES);
                             socketChannel.read(sizeBuf);
@@ -44,13 +42,13 @@ public class NIOServer {
                             socketChannel.read(arrayBuf);
                             arrayBuf.flip();
 
-                            requestTimekeeper.start();
-                            ArrayList<Integer> list = new ArrayList<Integer>(Protocol.Array.parseFrom(arrayBuf.array()).getContentList());
+                            int timerId = requestTimekeeper.start();
+                            ArrayList<Integer> list = new ArrayList<>(Protocol.Array.parseFrom(arrayBuf.array()).getContentList());
                             Collections.sort(list);
                             sizeBuf.clear();
                             arrayBuf.clear();
                             byte[] byteArray = Protocol.Array.newBuilder().addAllContent(list).build().toByteArray();
-                            requestTimekeeper.finish();
+                            requestTimekeeper.finish(timerId);
 
                             sizeBuf.putInt(byteArray.length);
                             arrayBuf.put(byteArray);
@@ -65,7 +63,7 @@ public class NIOServer {
                         } catch (IOException e) {
                             e.printStackTrace();
                         } finally {
-                            clientTimekeeper.finish();
+                            clientTimekeeper.finish(clientTimerId);
                         }
                     });
                 }
@@ -75,20 +73,14 @@ public class NIOServer {
         }
     }
 
+    @Override
     public void close() {
         try {
             if (serverChannel != null) {
                 serverChannel.close();
             }
         } catch (IOException e) {
+            return;
         }
-    }
-
-    public double requestHandleTime() {
-        return requestTimekeeper.average();
-    }
-
-    public double clientHandleTime() {
-        return clientTimekeeper.average();
     }
 }

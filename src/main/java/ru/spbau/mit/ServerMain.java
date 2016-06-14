@@ -2,21 +2,26 @@ package ru.spbau.mit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import ru.spbau.mit.servers.*;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public final class ServerMain {
     public static final int REQUEST_OPEN = 0;
     public static final int REQUEST_CLOSE = 1;
+    public static final int CONFIRM_SIGNAL = 17;
     private static final Logger LOG = LogManager.getLogger(ServerMain.class);
-    private static TCPServer tcpServer;
-    private static UDPServer udpServer;
-    private static NIOServer nioServer;
-    private static int serverType;
+
+    public static final ExecutorService cachedThreadPool = Executors.newCachedThreadPool(),
+            fixedThreadPool = Executors.newFixedThreadPool(Config.FIXED_THREAD_POOL_SIZE);
+
+    private static Server server;
 
     public static void main(String[] args) {
         LOG.info("I will occupy {}", Config.MAIN_SERVER_PORT);
@@ -28,22 +33,16 @@ public final class ServerMain {
                     int requestType = dataInputStream.readInt();
                     LOG.info("type = {}", requestType);
                     if (requestType == REQUEST_OPEN) {
-                        int handleType = dataInputStream.readInt(), handlerType = dataInputStream.readInt(), serverType=dataInputStream.readInt();
-                        LOG.info("handle = {}, handler = {}", handleType, handlerType);
+                        Config.ServerType serverType = Config.ServerType.values()[dataInputStream.readInt()];
+                        RunnerType runnerType = RunnerType.values()[dataInputStream.readInt()];
+                        LOG.info("server = {}, runner = {}", serverType, runnerType);
+
                         close();
-                        open(handleType, handlerType, serverType);
-                        dataOutputStream.writeInt(0);
+                        open(serverType, runnerType);
+                        dataOutputStream.writeInt(CONFIRM_SIGNAL);
                     } else {
-                        if(serverType == 0) {
-                            dataOutputStream.writeDouble(tcpServer.requestHandleTime());
-                            dataOutputStream.writeDouble(tcpServer.clientHandleTime());
-                        }else if(serverType==1){
-                            dataOutputStream.writeDouble(nioServer.requestHandleTime());
-                            dataOutputStream.writeDouble(nioServer.clientHandleTime());
-                        }else {
-                            dataOutputStream.writeDouble(udpServer.requestHandleTime());
-                            dataOutputStream.writeDouble(udpServer.clientHandleTime());
-                        }
+                        dataOutputStream.writeDouble(server.requestHandleTime());
+                        dataOutputStream.writeDouble(server.clientHandleTime());
                         close();
                     }
                     dataOutputStream.flush();
@@ -54,35 +53,18 @@ public final class ServerMain {
         }
     }
 
-    private static void open(int handleType, int handlerType, int serverType) {
-        ServerMain.serverType = serverType;
-        if(serverType==0) {
-            tcpServer = new TCPServer(handleType, handlerType);
-            new Thread(tcpServer::run).start();
-        }else if(serverType==1) {
-            nioServer = new NIOServer();
-            new Thread(nioServer::run).start();
-        }else if(serverType==2) {
-            udpServer = new UDPServer(handleType);
-            new Thread(udpServer::run).start();
-        }
+    private ServerMain() {
+    }
+
+    private static void open(Config.ServerType serverType, RunnerType runnerType) {
+        server = serverType.constructor.apply(runnerType);
+        new Thread(server::run).start();
     }
 
     private static void close() {
-        if (tcpServer != null) {
-            tcpServer.close();
+        if (server != null) {
+            server.close();
         }
-        tcpServer = null;
-        if (udpServer != null) {
-            udpServer.close();
-        }
-        udpServer = null;
-        if (nioServer != null) {
-            nioServer.close();
-        }
-        nioServer = null;
-    }
-
-    private ServerMain() {
+        server = null;
     }
 }

@@ -3,21 +3,20 @@ package ru.spbau.mit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
+
 public class Timekeeper {
-    private long sum = 0, startTime = 0;
-    private int count;
+    private long sum = 0;
+    private ArrayList<Long> startTime = new ArrayList<>();
     private final Logger LOG = LogManager.getLogger(this);
 
-    public Timekeeper() {
+    public int start() {
+        startTime.add(System.currentTimeMillis());
+        return startTime.size() - 1;
     }
 
-    public void start() {
-        ++count;
-        startTime = System.currentTimeMillis();
-    }
-
-    public void finish() {
-        sum += System.currentTimeMillis() - startTime;
+    public void finish(int id) {
+        sum += System.currentTimeMillis() - startTime.get(id);
     }
 
     public long getSum() {
@@ -25,6 +24,6 @@ public class Timekeeper {
     }
 
     public double average() {
-        return (double) sum / count;
+        return (double) sum / startTime.size();
     }
 }
