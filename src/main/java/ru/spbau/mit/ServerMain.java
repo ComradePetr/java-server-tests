@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.spbau.mit.architecture.RunnerType;
 import ru.spbau.mit.architecture.ServerType;
-import ru.spbau.mit.servers.*;
+import ru.spbau.mit.servers.Server;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -20,7 +20,8 @@ public final class ServerMain {
     public static final int CONFIRM_SIGNAL = 17;
     private static final Logger LOG = LogManager.getLogger(ServerMain.class);
 
-    public static final ExecutorService cachedThreadPool = Executors.newCachedThreadPool(),
+    public static final ExecutorService
+            cachedThreadPool = Executors.newCachedThreadPool(),
             fixedThreadPool = Executors.newFixedThreadPool(Config.FIXED_THREAD_POOL_SIZE);
 
     private static Server server;

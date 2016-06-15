@@ -1,5 +1,6 @@
 package ru.spbau.mit;
 
+import com.google.common.base.Throwables;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.embed.swing.JFXPanel;
@@ -35,7 +36,7 @@ public final class ServerTestsMain {
         JPanel jPanel = new JPanel();
         jPanel.setLayout(new BoxLayout(jPanel, BoxLayout.Y_AXIS));
         jPanel.add(createGraph());
-        jPanel.add(createOptions());
+        jPanel.add(createOptions(frame));
 
         frame.add(jPanel);
         frame.pack();
@@ -69,7 +70,7 @@ public final class ServerTestsMain {
         return field;
     }
 
-    private static JPanel createOptions() {
+    private static JPanel createOptions(JFrame frame) {
         JPanel options = new JPanel(new GridLayout(10, 6));
         ButtonGroup group = new ButtonGroup();
 
@@ -90,7 +91,7 @@ public final class ServerTestsMain {
         );
         options.add(jComboBox);
 
-        startButton.addActionListener((e) -> {
+        startButton.addActionListener((event) -> {
             Config.arraySize.set(arraySize.getText());
             Config.clientsCount.set(clientsCount.getText());
             Config.delay.set(delay.getText());
@@ -109,11 +110,12 @@ public final class ServerTestsMain {
             architecture = Config.architectures[jComboBox.getSelectedIndex()];
             new Thread(() -> {
                 try {
-                    start(toChange, step, upperBound);
-                } catch (FileNotFoundException e1) {
-                    e1.printStackTrace();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
+                    run(toChange, step, upperBound);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(frame, "Unable to connect to server. Check log for details", "Connection error", JOptionPane.ERROR_MESSAGE);
+                    LOG.error(Throwables.getStackTraceAsString(e));
                 }
             }).start();
         });
@@ -122,12 +124,10 @@ public final class ServerTestsMain {
     }
 
     private static void updateGraph(int id, String name, ArrayList<XYChart.Data<Number, Double>> data) {
-        charts[id].setData(FXCollections.observableArrayList(
-                new XYChart.Series(name, FXCollections.observableArrayList(data)))
-        );
+        charts[id].setData(FXCollections.observableArrayList(new XYChart.Series(name, FXCollections.observableArrayList(data))));
     }
 
-    private static void start(Config.Parameter toChange, int step, int upperBound)
+    private static void run(Config.Parameter toChange, int step, int upperBound)
             throws IOException {
         try (PrintWriter description = new PrintWriter("output-description.txt")) {
             description.println("Start values:");
@@ -169,6 +169,7 @@ public final class ServerTestsMain {
                         e.printStackTrace();
                     }
                 }
+
                 sendToServer(ServerMain.REQUEST_CLOSE);
                 double clientTime = (double) sum / Config.clientsCount.get();
 

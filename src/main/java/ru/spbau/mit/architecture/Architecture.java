@@ -7,8 +7,7 @@ public class Architecture {
     public final ClientType clientType;
 
     public Architecture(ServerType serverType, RunnerType runnerType, ClientType clientType) {
-        this.name = String.format("%s with %s, clientType = %s",
-                serverType.toString(), runnerType.toString(), clientType.toString());
+        this.name = String.format("%s with %s, clientType = %s", serverType.toString(), runnerType.toString(), clientType.toString());
         this.serverType = serverType;
         this.runnerType = runnerType;
         this.clientType = clientType;

@@ -13,10 +13,15 @@ public final class Config {
     public static final Architecture architectures[] = new Architecture[]{
             new Architecture(ServerType.TCP, RunnerType.MANY_THREADS, ClientType.TCPOneConnection),
             new Architecture(ServerType.TCP, RunnerType.CACHED_POOL, ClientType.TCPOneConnection),
-            new Architecture(ServerType.NIO, RunnerType.FIXED_POOL, ClientType.TCPOneConnection),
             new Architecture(ServerType.TCP, RunnerType.MAIN_THREAD, ClientType.TCPConnectionPerRequest),
+
+            new Architecture(ServerType.NIO, RunnerType.FIXED_POOL, ClientType.TCPOneConnection),
+            new Architecture(ServerType.NIO, RunnerType.MAIN_THREAD, ClientType.TCPOneConnection),
+            new Architecture(ServerType.NIO, RunnerType.MANY_THREADS, ClientType.TCPOneConnection),
+            new Architecture(ServerType.NIO, RunnerType.CACHED_POOL, ClientType.TCPOneConnection),
+
             new Architecture(ServerType.UDP, RunnerType.MANY_THREADS, ClientType.UDP),
-            new Architecture(ServerType.UDP, RunnerType.FIXED_POOL, ClientType.UDP),
+            new Architecture(ServerType.UDP, RunnerType.FIXED_POOL, ClientType.UDP)
     };
 
     public final static class Parameter {

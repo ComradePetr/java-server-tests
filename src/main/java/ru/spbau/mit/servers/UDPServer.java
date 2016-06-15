@@ -29,17 +29,16 @@ public class UDPServer extends Server {
                     byte[] byteArray = new byte[Config.UDP_PACKET_MAX_SIZE];
                     final DatagramPacket packet = new DatagramPacket(byteArray, byteArray.length);
                     serverSocket.receive(packet);
-                    final int timerId = clientTimekeeper.start();
+                    int timerId = clientTimekeeper.start();
 
-                    runnerType.run(() -> {
+                    runner.run(() -> {
                         byte[] data = packet.getData();
                         try (DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(data));
                              ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                              DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
                             sendArray(handleArray(receiveArray(dataInputStream)), dataOutputStream);
                             data = byteArrayOutputStream.toByteArray();
-                            DatagramPacket packetResponse = new DatagramPacket(data, data.length,
-                                    packet.getAddress(), packet.getPort());
+                            DatagramPacket packetResponse = new DatagramPacket(data, data.length, packet.getAddress(), packet.getPort());
                             serverSocket.send(packetResponse);
                         } catch (IOException e) {
                             LOG.error(Throwables.getStackTraceAsString(e));

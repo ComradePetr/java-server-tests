@@ -29,9 +29,8 @@ public class TCPServer extends Server {
             while (true) {
                 try {
                     Socket socket = serverSocket.accept();
-                    final int timerId = clientTimekeeper.start();
-
-                    runnerType.run(() -> {
+                    int timerId = clientTimekeeper.start();
+                    runner.run(() -> {
                         try (DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
                              DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream())) {
                             while (!socket.isClosed()) {

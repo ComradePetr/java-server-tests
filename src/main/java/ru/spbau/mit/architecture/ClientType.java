@@ -12,7 +12,7 @@ public enum ClientType {
     TCPOneConnection(TCPOneConnectionClient::new),
     UDP(UDPClient::new);
 
-    private Supplier<Client> constructor;
+    public Supplier<Client> constructor;
 
     ClientType(Supplier<Client> constructor) {
         this.constructor = constructor;

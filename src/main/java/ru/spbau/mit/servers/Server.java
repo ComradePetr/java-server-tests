@@ -1,5 +1,6 @@
 package ru.spbau.mit.servers;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.spbau.mit.Protocol;
@@ -13,12 +14,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public abstract class Server {
-    protected final RunnerType runnerType;
+    protected final RunnerType runner;
     protected final Timekeeper requestTimekeeper = new Timekeeper(), clientTimekeeper = new Timekeeper();
     private final Logger LOG = LogManager.getLogger(this);
 
-    public Server(RunnerType runnerType) {
-        this.runnerType = runnerType;
+    public Server(RunnerType runner) {
+        this.runner = runner;
     }
 
     public abstract void run();
@@ -33,11 +34,19 @@ public abstract class Server {
         return clientTimekeeper.average();
     }
 
+    protected ArrayList<Integer> decode(byte[] byteArray) throws InvalidProtocolBufferException {
+        return new ArrayList<>(Protocol.Array.parseFrom(byteArray).getContentList());
+    }
+
+    protected byte[] encode(ArrayList<Integer> array) {
+        return Protocol.Array.newBuilder().addAllContent(array).build().toByteArray();
+    }
+
     protected ArrayList<Integer> receiveArray(DataInputStream dataInputStream) throws IOException {
         int size = dataInputStream.readInt();
         byte[] byteArray = new byte[size];
         dataInputStream.readFully(byteArray);
-        return new ArrayList<>(Protocol.Array.parseFrom(byteArray).getContentList());
+        return decode(byteArray);
     }
 
     protected ArrayList<Integer> handleArray(ArrayList<Integer> array) {
@@ -49,7 +58,7 @@ public abstract class Server {
     }
 
     protected void sendArray(ArrayList<Integer> array, DataOutputStream dataOutputStream) throws IOException {
-        byte[] byteArray = Protocol.Array.newBuilder().addAllContent(array).build().toByteArray();
+        byte[] byteArray = encode(array);
         dataOutputStream.writeInt(byteArray.length);
         dataOutputStream.write(byteArray);
         dataOutputStream.flush();
