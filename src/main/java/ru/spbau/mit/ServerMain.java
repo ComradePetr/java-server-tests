@@ -27,11 +27,11 @@ public final class ServerMain {
     public static final ExecutorService
             cachedThreadPool = Executors.newCachedThreadPool(),
             fixedThreadPool = Executors.newFixedThreadPool(Config.FIXED_THREAD_POOL_SIZE);
+    public static int processNumber = 1;
 
     private static final Logger LOG = LogManager.getLogger(ServerMain.class);
     private static ServerSocket serverSocket;
     private static Server server;
-    private static int processNumber = 1;
     private static ServerType serverType;
     private static RunnerType runnerType;
     private static boolean closed = false;

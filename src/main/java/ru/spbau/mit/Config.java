@@ -12,11 +12,11 @@ public final class Config {
     public static final int NEW_PROCESS_DELAY = 1500;
 
     public static final Architecture ARCHITECTURES[] = new Architecture[]{
-            new Architecture(ServerType.TCPProcess, RunnerType.MAIN_THREAD, ClientType.TCPOneConnection),
-
             new Architecture(ServerType.TCP, RunnerType.MANY_THREADS, ClientType.TCPOneConnection),
             new Architecture(ServerType.TCP, RunnerType.CACHED_POOL, ClientType.TCPOneConnection),
             new Architecture(ServerType.TCP, RunnerType.MAIN_THREAD, ClientType.TCPConnectionPerRequest),
+
+            new Architecture(ServerType.TCPProcess, RunnerType.MAIN_THREAD, ClientType.TCPOneConnection),
 
             new Architecture(ServerType.NIO, RunnerType.FIXED_POOL, ClientType.TCPOneConnection),
             new Architecture(ServerType.NIO, RunnerType.MAIN_THREAD, ClientType.TCPOneConnection),
