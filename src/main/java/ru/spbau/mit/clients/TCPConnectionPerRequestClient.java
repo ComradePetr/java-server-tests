@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class TCPConnectionPerRequestClient extends Client {
-    private final Logger LOG = LogManager.getLogger(this);
+    private final Logger log = LogManager.getLogger(this);
 
     @Override
     public void run() {
@@ -22,7 +22,7 @@ public class TCPConnectionPerRequestClient extends Client {
                 sendArray(dataOutputStream);
                 checkArray(receiveArray(dataInputStream));
             } catch (IOException e) {
-                LOG.error(Throwables.getStackTraceAsString(e));
+                log.error(Throwables.getStackTraceAsString(e));
             }
         }
     }

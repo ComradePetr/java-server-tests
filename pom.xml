@@ -80,12 +80,20 @@
                         </goals>
                         <configuration>
                             <configLocation>src/test/resources/checkstyle.xml</configLocation>
-                            <failOnViolation>true</failOnViolation>
+                            <failOnViolation>false</failOnViolation>
                             <includeTestSourceDirectory>true</includeTestSourceDirectory>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>-->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin>
             <!--<plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>

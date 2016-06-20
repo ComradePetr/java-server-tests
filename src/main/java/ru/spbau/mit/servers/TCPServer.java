@@ -14,8 +14,8 @@ import java.net.Socket;
 import java.net.SocketException;
 
 public class TCPServer extends Server {
-    private final Logger LOG = LogManager.getLogger(this);
-    private ServerSocket serverSocket;
+    private final Logger log = LogManager.getLogger(this);
+    protected ServerSocket serverSocket;
 
     public TCPServer(RunnerType runnerType) {
         super(runnerType);
@@ -23,53 +23,55 @@ public class TCPServer extends Server {
 
     @Override
     public void run() {
-        LOG.info("I will occupy {}", Config.SERVER_PORT);
+        log.info("I will occupy {}", Config.SERVER_PORT);
         try (ServerSocket serverSocket = new ServerSocket(Config.SERVER_PORT)) {
             this.serverSocket = serverSocket;
             while (true) {
+                Socket socket;
                 try {
-                    Socket socket = serverSocket.accept();
-                    int timerId = clientTimekeeper.start();
-                    runner.run(() -> {
-                        try (DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-                             DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream())) {
-                            while (!socket.isClosed()) {
-                                try {
-                                    sendArray(handleArray(receiveArray(dataInputStream)), dataOutputStream);
-                                } catch (IOException e) {
-                                    return;
-                                }
-                            }
-                        } catch (IOException e) {
-                            LOG.error(Throwables.getStackTraceAsString(e));
-                        } finally {
-                            clientTimekeeper.finish(timerId);
-                            try {
-                                socket.close();
-                            } catch (IOException e) {
-                                LOG.error(Throwables.getStackTraceAsString(e));
-                            }
-                        }
-                    });
+                    socket = serverSocket.accept();
                 } catch (SocketException e) {
                     return;
                 }
+                int timerId = clientTimekeeper.start();
+
+                runner.run(() -> {
+                    try (DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
+                         DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream())) {
+                        while (!socket.isClosed()) {
+                            try {
+                                sendArray(handleArray(receiveArray(dataInputStream)), dataOutputStream);
+                            } catch (IOException e) {
+                                return;
+                            }
+                        }
+                    } catch (IOException e) {
+                        log.error(Throwables.getStackTraceAsString(e));
+                    } finally {
+                        clientTimekeeper.finish(timerId);
+                        try {
+                            socket.close();
+                        } catch (IOException e) {
+                            log.error(Throwables.getStackTraceAsString(e));
+                        }
+                    }
+                });
             }
         } catch (SocketException e) {
             return;
         } catch (IOException e) {
-            LOG.error(Throwables.getStackTraceAsString(e));
+            log.error(Throwables.getStackTraceAsString(e));
         }
     }
 
     @Override
     public void close() {
-        try {
-            if (serverSocket != null) {
+        if (serverSocket != null) {
+            try {
                 serverSocket.close();
+            } catch (IOException e) {
+                return;
             }
-        } catch (IOException e) {
-            return;
         }
     }
 }

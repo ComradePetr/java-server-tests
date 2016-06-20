@@ -9,7 +9,7 @@ import java.io.*;
 import java.net.*;
 
 public class UDPClient extends Client {
-    private final Logger LOG = LogManager.getLogger(this);
+    private final Logger log = LogManager.getLogger(this);
 
     @Override
     public void run() {
@@ -31,8 +31,8 @@ public class UDPClient extends Client {
                     try {
                         socket.receive(packet);
                     } catch (SocketTimeoutException e) {
-                        LOG.warn("Can't wait for response more than {} ms", Config.UDP_TIMEOUT);
-                        LOG.warn(Throwables.getStackTraceAsString(e));
+                        log.warn("Can't wait for response more than {} ms", Config.UDP_TIMEOUT);
+                        log.warn(Throwables.getStackTraceAsString(e));
                     }
 
                     byte[] data = packet.getData();
@@ -40,11 +40,11 @@ public class UDPClient extends Client {
                         checkArray(receiveArray(dataInputStream));
                     }
                 } catch (IOException e) {
-                    LOG.error(Throwables.getStackTraceAsString(e));
+                    log.error(Throwables.getStackTraceAsString(e));
                 }
             }
         } catch (SocketException e) {
-            LOG.error(Throwables.getStackTraceAsString(e));
+            log.error(Throwables.getStackTraceAsString(e));
         }
     }
 }

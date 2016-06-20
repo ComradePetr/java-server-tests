@@ -13,7 +13,7 @@ import java.nio.channels.*;
 import java.util.Iterator;
 
 public class NIOServer extends Server {
-    private final Logger LOG = LogManager.getLogger(this);
+    private final Logger log = LogManager.getLogger(this);
     private Selector selector;
     private ServerSocketChannel serverSocketChannel;
 
@@ -23,7 +23,7 @@ public class NIOServer extends Server {
 
     @Override
     public void run() {
-        LOG.info("I will occupy {}", Config.SERVER_PORT);
+        log.info("I will occupy {}", Config.SERVER_PORT);
         try {
             selector = Selector.open();
 
@@ -79,7 +79,7 @@ public class NIOServer extends Server {
         } catch (ClosedSelectorException e) {
             return;
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error(Throwables.getStackTraceAsString(e));
         }
     }
 
@@ -89,14 +89,14 @@ public class NIOServer extends Server {
             selector.close();
             serverSocketChannel.close();
         } catch (IOException e) {
-            LOG.error(Throwables.getStackTraceAsString(e));
+            log.error(Throwables.getStackTraceAsString(e));
         }
     }
 
     private class ClientData {
         private int timerId;
         private ByteBuffer sizeBuffer, dataBuffer;
-        boolean writeMode;
+        private boolean writeMode;
 
         public ClientData(int timerId) {
             this.timerId = timerId;

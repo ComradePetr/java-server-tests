@@ -12,7 +12,7 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 
 public class UDPServer extends Server {
-    private final Logger LOG = LogManager.getLogger(this);
+    private final Logger log = LogManager.getLogger(this);
     private DatagramSocket serverSocket;
 
     public UDPServer(RunnerType runnerType) {
@@ -21,39 +21,39 @@ public class UDPServer extends Server {
 
     @Override
     public void run() {
-        LOG.info("I will occupy {}", Config.SERVER_PORT);
+        log.info("I will occupy {}", Config.SERVER_PORT);
         try (DatagramSocket serverSocket = new DatagramSocket(Config.SERVER_PORT)) {
             this.serverSocket = serverSocket;
             while (!serverSocket.isClosed()) {
+                byte[] byteArray = new byte[Config.UDP_PACKET_MAX_SIZE];
+                final DatagramPacket packet = new DatagramPacket(byteArray, byteArray.length);
                 try {
-                    byte[] byteArray = new byte[Config.UDP_PACKET_MAX_SIZE];
-                    final DatagramPacket packet = new DatagramPacket(byteArray, byteArray.length);
                     serverSocket.receive(packet);
-                    int timerId = clientTimekeeper.start();
-
-                    runner.run(() -> {
-                        byte[] data = packet.getData();
-                        try (DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(data));
-                             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                             DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
-                            sendArray(handleArray(receiveArray(dataInputStream)), dataOutputStream);
-                            data = byteArrayOutputStream.toByteArray();
-                            DatagramPacket packetResponse = new DatagramPacket(data, data.length, packet.getAddress(), packet.getPort());
-                            serverSocket.send(packetResponse);
-                        } catch (IOException e) {
-                            LOG.error(Throwables.getStackTraceAsString(e));
-                        } finally {
-                            clientTimekeeper.finish(timerId);
-                        }
-                    });
                 } catch (SocketException e) {
                     return;
                 } catch (IOException e) {
-                    LOG.error(Throwables.getStackTraceAsString(e));
+                    log.error(Throwables.getStackTraceAsString(e));
                 }
+                int timerId = clientTimekeeper.start();
+
+                runner.run(() -> {
+                    byte[] data = packet.getData();
+                    try (DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(data));
+                         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                         DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
+                        sendArray(handleArray(receiveArray(dataInputStream)), dataOutputStream);
+                        data = byteArrayOutputStream.toByteArray();
+                        DatagramPacket packetResponse = new DatagramPacket(data, data.length, packet.getAddress(), packet.getPort());
+                        serverSocket.send(packetResponse);
+                    } catch (IOException e) {
+                        log.error(Throwables.getStackTraceAsString(e));
+                    } finally {
+                        clientTimekeeper.finish(timerId);
+                    }
+                });
             }
         } catch (SocketException e) {
-            LOG.error(Throwables.getStackTraceAsString(e));
+            log.error(Throwables.getStackTraceAsString(e));
         }
     }
 

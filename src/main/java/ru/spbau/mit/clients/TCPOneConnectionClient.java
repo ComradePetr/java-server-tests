@@ -11,10 +11,11 @@ import java.io.IOException;
 import java.net.Socket;
 
 public class TCPOneConnectionClient extends Client {
-    private final Logger LOG = LogManager.getLogger(this);
+    private final Logger log = LogManager.getLogger(this);
 
     @Override
     public void run() {
+        log.info("TRY TO CONNECT");
         try (Socket socket = new Socket(Config.serverAddress, Config.SERVER_PORT);
              DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
              DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream())) {
@@ -23,7 +24,7 @@ public class TCPOneConnectionClient extends Client {
                 checkArray(receiveArray(dataInputStream));
             }
         } catch (IOException e) {
-            LOG.error(Throwables.getStackTraceAsString(e));
+            log.error(Throwables.getStackTraceAsString(e));
         }
     }
 }

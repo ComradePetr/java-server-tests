@@ -9,8 +9,11 @@ public final class Config {
     public static final int MAIN_SERVER_PORT = 17238, SERVER_PORT = 17239;
     public static final int FIXED_THREAD_POOL_SIZE = 4;
     public static final int UDP_PACKET_MAX_SIZE = 1024, UDP_TIMEOUT = 1000;
+    public static final int NEW_PROCESS_DELAY = 1500;
 
-    public static final Architecture architectures[] = new Architecture[]{
+    public static final Architecture ARCHITECTURES[] = new Architecture[]{
+            new Architecture(ServerType.TCPProcess, RunnerType.MAIN_THREAD, ClientType.TCPOneConnection),
+
             new Architecture(ServerType.TCP, RunnerType.MANY_THREADS, ClientType.TCPOneConnection),
             new Architecture(ServerType.TCP, RunnerType.CACHED_POOL, ClientType.TCPOneConnection),
             new Architecture(ServerType.TCP, RunnerType.MAIN_THREAD, ClientType.TCPConnectionPerRequest),
@@ -24,7 +27,7 @@ public final class Config {
             new Architecture(ServerType.UDP, RunnerType.FIXED_POOL, ClientType.UDP)
     };
 
-    public final static class Parameter {
+    public static final class Parameter {
         private String name;
         private int value;
 

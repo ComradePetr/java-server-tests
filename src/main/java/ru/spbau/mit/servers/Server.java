@@ -16,7 +16,7 @@ import java.util.Collections;
 public abstract class Server {
     protected final RunnerType runner;
     protected final Timekeeper requestTimekeeper = new Timekeeper(), clientTimekeeper = new Timekeeper();
-    private final Logger LOG = LogManager.getLogger(this);
+    private final Logger log = LogManager.getLogger(this);
 
     public Server(RunnerType runner) {
         this.runner = runner;
@@ -52,7 +52,7 @@ public abstract class Server {
     protected ArrayList<Integer> handleArray(ArrayList<Integer> array) {
         int timerId = requestTimekeeper.start();
         Collections.sort(array);
-        LOG.info("Server just sorted array (size = {})", array.size());
+        log.info("Server just sorted array (size = {})", array.size());
         requestTimekeeper.finish(timerId);
         return array;
     }
@@ -63,6 +63,6 @@ public abstract class Server {
         dataOutputStream.write(byteArray);
         dataOutputStream.flush();
 
-        LOG.info("I just wrote array (size = {})", array.size());
+        log.info("I just wrote array (size = {})", array.size());
     }
 }

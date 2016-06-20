@@ -1,5 +1,6 @@
 package ru.spbau.mit.clients;
 
+import com.google.common.base.Throwables;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.spbau.mit.Config;
@@ -13,19 +14,19 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 public abstract class Client {
-    private final Logger LOG = LogManager.getLogger(this);
-    private final Random RND = new Random();
+    private final Logger log = LogManager.getLogger(this);
+    private final Random rnd = new Random();
 
     public abstract void run();
 
     protected void sendArray(DataOutputStream dataOutputStream) throws IOException {
-        List<Integer> list = RND.ints(Config.arraySize.get()).boxed().collect(Collectors.toList());
+        List<Integer> list = rnd.ints(Config.arraySize.get()).boxed().collect(Collectors.toList());
         byte[] byteArray = Protocol.Array.newBuilder().addAllContent(list).build().toByteArray();
         dataOutputStream.writeInt(byteArray.length);
         dataOutputStream.write(byteArray);
         dataOutputStream.flush();
 
-        LOG.info("I just wrote array (size = {})", list.size());
+        log.info("I just wrote array (size = {})", list.size());
     }
 
     protected List<Integer> receiveArray(DataInputStream dataInputStream) throws IOException {
@@ -45,14 +46,14 @@ public abstract class Client {
             first = false;
             last = x;
         }
-        LOG.info("Array (size = {}) is ok", array.size());
+        log.info("Array (size = {}) is ok", array.size());
     }
 
     protected void hangOn() {
         try {
             Thread.sleep(Config.delay.get());
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            log.error(Throwables.getStackTraceAsString(e));
         }
     }
 }

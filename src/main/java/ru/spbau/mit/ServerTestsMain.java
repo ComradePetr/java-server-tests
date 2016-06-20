@@ -11,6 +11,7 @@ import javafx.scene.chart.XYChart;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.spbau.mit.architecture.Architecture;
+import ru.spbau.mit.architecture.ServerType;
 
 import javax.swing.*;
 import java.awt.*;
@@ -87,7 +88,7 @@ public final class ServerTestsMain {
         options.add(startButton);
 
         JComboBox<String> jComboBox = new JComboBox<>(
-                new Vector<>(Arrays.stream(Config.architectures).map(Architecture::getName).collect(Collectors.toList()))
+                new Vector<>(Arrays.stream(Config.ARCHITECTURES).map(Architecture::getName).collect(Collectors.toList()))
         );
         options.add(jComboBox);
 
@@ -107,14 +108,17 @@ public final class ServerTestsMain {
             final Config.Parameter toChange = Config.parameters[toChangeId];
             final int step = Integer.valueOf(stepField.getText()),
                     upperBound = Integer.valueOf(upperBoundField.getText());
-            architecture = Config.architectures[jComboBox.getSelectedIndex()];
+            architecture = Config.ARCHITECTURES[jComboBox.getSelectedIndex()];
             new Thread(() -> {
                 try {
                     run(toChange, step, upperBound);
                 } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                    SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(frame,
+                            "Can't create output files. Check log for details", "IO error", JOptionPane.ERROR_MESSAGE));
+                    LOG.error(Throwables.getStackTraceAsString(e));
                 } catch (IOException e) {
-                    JOptionPane.showMessageDialog(frame, "Unable to connect to server. Check log for details", "Connection error", JOptionPane.ERROR_MESSAGE);
+                    SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(frame,
+                            "Unable to connect to server. Check log for details", "Connection error", JOptionPane.ERROR_MESSAGE));
                     LOG.error(Throwables.getStackTraceAsString(e));
                 }
             }).start();
@@ -127,8 +131,7 @@ public final class ServerTestsMain {
         charts[id].setData(FXCollections.observableArrayList(new XYChart.Series(name, FXCollections.observableArrayList(data))));
     }
 
-    private static void run(Config.Parameter toChange, int step, int upperBound)
-            throws IOException {
+    private static void run(Config.Parameter toChange, int step, int upperBound) throws IOException {
         try (PrintWriter description = new PrintWriter("output-description.txt")) {
             description.println("Start values:");
 
@@ -158,6 +161,13 @@ public final class ServerTestsMain {
                         clientTimekeeper.finish(timerId);
                         return clientTimekeeper.getSum();
                     }));
+                    if (architecture.serverType == ServerType.TCPProcess) {
+                        try {
+                            Thread.sleep(Config.NEW_PROCESS_DELAY);
+                        } catch (InterruptedException e) {
+                            LOG.error(Throwables.getStackTraceAsString(e));
+                        }
+                    }
                 }
                 taskExecutor.shutdown();
 
@@ -166,7 +176,7 @@ public final class ServerTestsMain {
                     try {
                         sum += results.get(i).get();
                     } catch (InterruptedException | ExecutionException e) {
-                        e.printStackTrace();
+                        LOG.error(Throwables.getStackTraceAsString(e));
                     }
                 }
 
@@ -188,8 +198,6 @@ public final class ServerTestsMain {
                     updateGraph(2, "clientTime", clientTimes);
                 });
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         }
     }
 
