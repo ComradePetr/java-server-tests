@@ -133,6 +133,7 @@ public final class ServerTestsMain {
 
     private static void run(Config.Parameter toChange, int step, int upperBound) throws IOException {
         try (PrintWriter description = new PrintWriter("output-description.txt")) {
+            description.println(architecture.getName());
             description.println("Start values:");
 
             for (Config.Parameter parameter : Config.parameters) {

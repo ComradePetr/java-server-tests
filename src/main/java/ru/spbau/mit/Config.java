@@ -8,7 +8,7 @@ import ru.spbau.mit.architecture.ServerType;
 public final class Config {
     public static final int MAIN_SERVER_PORT = 17238, SERVER_PORT = 17239;
     public static final int FIXED_THREAD_POOL_SIZE = 4;
-    public static final int UDP_PACKET_MAX_SIZE = 1024, UDP_TIMEOUT = 1000;
+    public static final int UDP_PACKET_MAX_SIZE = 65536, UDP_TIMEOUT = 1000;
     public static final int NEW_PROCESS_DELAY = 1500;
 
     public static final Architecture ARCHITECTURES[] = new Architecture[]{

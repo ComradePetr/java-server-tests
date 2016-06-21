@@ -38,8 +38,8 @@ public class TCPProcessServer extends TCPServer {
             } catch (SocketException e) {
                 return;
             }
-            ServerMain.spawn();
             int timerId = clientTimekeeper.start();
+            ServerMain.spawn();
             try (DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
                  DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream())) {
                 while (!socket.isClosed()) {
