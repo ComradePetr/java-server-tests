@@ -20,7 +20,7 @@ public abstract class Client {
     public abstract void run();
 
     protected void sendArray(DataOutputStream dataOutputStream) throws IOException {
-        List<Integer> list = rnd.ints(Config.arraySize.get()).boxed().collect(Collectors.toList());
+        List<Integer> list = rnd.ints(Config.ARRAY_SIZE.get()).boxed().collect(Collectors.toList());
         byte[] byteArray = Protocol.Array.newBuilder().addAllContent(list).build().toByteArray();
         dataOutputStream.writeInt(byteArray.length);
         dataOutputStream.write(byteArray);
@@ -51,7 +51,7 @@ public abstract class Client {
 
     protected void hangOn() {
         try {
-            Thread.sleep(Config.delay.get());
+            Thread.sleep(Config.DELAY.get());
         } catch (InterruptedException e) {
             log.error(Throwables.getStackTraceAsString(e));
         }

@@ -25,8 +25,8 @@ public final class ServerMain {
     public static final int REQUEST_CLOSE = 1;
     public static final int CONFIRM_SIGNAL = 17;
     public static final ExecutorService
-            cachedThreadPool = Executors.newCachedThreadPool(),
-            fixedThreadPool = Executors.newFixedThreadPool(Config.FIXED_THREAD_POOL_SIZE);
+            CACHED_THREAD_POOL = Executors.newCachedThreadPool(),
+            FIXED_THREAD_POOL = Executors.newFixedThreadPool(Config.FIXED_THREAD_POOL_SIZE);
     public static int processNumber = 1;
 
     private static final Logger LOG = LogManager.getLogger(ServerMain.class);

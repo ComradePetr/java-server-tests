@@ -10,7 +10,7 @@ public enum ServerType {
     UDP(UDPServer::new),
     TCPProcess(TCPProcessServer::new);
 
-    public Function<RunnerType, Server> constructor;
+    public final Function<RunnerType, Server> constructor;
 
     ServerType(Function<RunnerType, Server> constructor) {
         this.constructor = constructor;

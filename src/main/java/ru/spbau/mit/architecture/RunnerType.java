@@ -7,10 +7,10 @@ import java.util.function.Consumer;
 public enum RunnerType {
     MAIN_THREAD(Runnable::run),
     MANY_THREADS((r) -> new Thread(r).start()),
-    CACHED_POOL(ServerMain.cachedThreadPool::execute),
-    FIXED_POOL(ServerMain.fixedThreadPool::execute);
+    CACHED_POOL(ServerMain.CACHED_THREAD_POOL::execute),
+    FIXED_POOL(ServerMain.FIXED_THREAD_POOL::execute);
 
-    private Consumer<Runnable> runner;
+    private final Consumer<Runnable> runner;
 
     RunnerType(Consumer<Runnable> runner) {
         this.runner = runner;

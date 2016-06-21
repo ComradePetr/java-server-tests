@@ -19,7 +19,7 @@ public class TCPOneConnectionClient extends Client {
         try (Socket socket = new Socket(Config.serverAddress, Config.SERVER_PORT);
              DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
              DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream())) {
-            for (int r = 0; r < Config.requestsCount.get(); r++, hangOn()) {
+            for (int r = 0; r < Config.REQUESTS_COUNT.get(); r++, hangOn()) {
                 sendArray(dataOutputStream);
                 checkArray(receiveArray(dataInputStream));
             }

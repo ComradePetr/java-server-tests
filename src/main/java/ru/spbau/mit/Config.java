@@ -28,7 +28,7 @@ public final class Config {
     };
 
     public static final class Parameter {
-        private String name;
+        private final String name;
         private int value;
 
         public Parameter(String name) {
@@ -52,12 +52,12 @@ public final class Config {
         }
     }
 
-    public static Parameter
-            arraySize = new Parameter("Array size (N)"),
-            clientsCount = new Parameter("Clients count (M)"),
-            delay = new Parameter("Delay (∆)"),
-            requestsCount = new Parameter("Requests count (X)");
-    public static Parameter parameters[] = new Parameter[]{arraySize, clientsCount, delay, requestsCount};
+    public static final Parameter
+            ARRAY_SIZE = new Parameter("Array size (N)"),
+            CLIENTS_COUNT = new Parameter("Clients count (M)"),
+            DELAY = new Parameter("Delay (∆)"),
+            REQUESTS_COUNT = new Parameter("Requests count (X)");
+    public static final Parameter PARAMETERS[] = new Parameter[]{ARRAY_SIZE, CLIENTS_COUNT, DELAY, REQUESTS_COUNT};
     public static String serverAddress;
 
     private Config() {

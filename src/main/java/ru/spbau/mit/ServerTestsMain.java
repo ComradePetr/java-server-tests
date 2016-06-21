@@ -29,7 +29,7 @@ public final class ServerTestsMain {
     private static final Logger LOG = LogManager.getLogger(ServerTestsMain.class);
     private static double requestHandleTime, clientHandleTime;
     private static Architecture architecture;
-    private static XYChart<Number, Number> charts[] = new XYChart[3];
+    private static final XYChart<Number, Number> CHARTS[] = new XYChart[3];
 
     public static void main(String[] args) throws InterruptedException, ExecutionException {
         JFrame frame = new JFrame("ServerTests");
@@ -46,9 +46,9 @@ public final class ServerTestsMain {
 
     private static JPanel createGraph() {
         JPanel chartPanel = new JPanel();
-        for (int i = 0; i < charts.length; i++) {
+        for (int i = 0; i < CHARTS.length; i++) {
             JFXPanel jfxPanel = new JFXPanel();
-            jfxPanel.setScene(new Scene(charts[i] = new LineChart<>(new NumberAxis(), new NumberAxis())));
+            jfxPanel.setScene(new Scene(CHARTS[i] = new LineChart<>(new NumberAxis(), new NumberAxis())));
             chartPanel.add(jfxPanel);
         }
         return chartPanel;
@@ -75,10 +75,10 @@ public final class ServerTestsMain {
         JPanel options = new JPanel(new GridLayout(10, 6));
         ButtonGroup group = new ButtonGroup();
 
-        JTextField arraySize = addParameter(options, group, Config.parameters[0].getName(), "10", true);
-        JTextField clientsCount = addParameter(options, group, Config.parameters[1].getName(), "2", false);
-        JTextField delay = addParameter(options, group, Config.parameters[2].getName(), "100", false);
-        JTextField requestsCount = addParameter(options, group, Config.parameters[3].getName(), "4", false);
+        JTextField arraySize = addParameter(options, group, Config.PARAMETERS[0].getName(), "10", true);
+        JTextField clientsCount = addParameter(options, group, Config.PARAMETERS[1].getName(), "2", false);
+        JTextField delay = addParameter(options, group, Config.PARAMETERS[2].getName(), "100", false);
+        JTextField requestsCount = addParameter(options, group, Config.PARAMETERS[3].getName(), "4", false);
 
         JTextField upperBoundField = addParameter(options, "Upper bound", "50");
         JTextField stepField = addParameter(options, "Step", "10");
@@ -93,10 +93,10 @@ public final class ServerTestsMain {
         options.add(jComboBox);
 
         startButton.addActionListener((event) -> {
-            Config.arraySize.set(arraySize.getText());
-            Config.clientsCount.set(clientsCount.getText());
-            Config.delay.set(delay.getText());
-            Config.requestsCount.set(requestsCount.getText());
+            Config.ARRAY_SIZE.set(arraySize.getText());
+            Config.CLIENTS_COUNT.set(clientsCount.getText());
+            Config.DELAY.set(delay.getText());
+            Config.REQUESTS_COUNT.set(requestsCount.getText());
             Config.serverAddress = serverAddress.getText();
             int toChangeId = 0;
             for (Enumeration<AbstractButton> buttons = group.getElements(); buttons.hasMoreElements(); toChangeId++) {
@@ -105,7 +105,7 @@ public final class ServerTestsMain {
                     break;
                 }
             }
-            final Config.Parameter toChange = Config.parameters[toChangeId];
+            final Config.Parameter toChange = Config.PARAMETERS[toChangeId];
             final int step = Integer.valueOf(stepField.getText()),
                     upperBound = Integer.valueOf(upperBoundField.getText());
             architecture = Config.ARCHITECTURES[jComboBox.getSelectedIndex()];
@@ -128,7 +128,7 @@ public final class ServerTestsMain {
     }
 
     private static void updateGraph(int id, String name, ArrayList<XYChart.Data<Number, Double>> data) {
-        charts[id].setData(FXCollections.observableArrayList(new XYChart.Series(name, FXCollections.observableArrayList(data))));
+        CHARTS[id].setData(FXCollections.observableArrayList(new XYChart.Series(name, FXCollections.observableArrayList(data))));
     }
 
     private static void run(Config.Parameter toChange, int step, int upperBound) throws IOException {
@@ -136,7 +136,7 @@ public final class ServerTestsMain {
             description.println(architecture.getName());
             description.println("Start values:");
 
-            for (Config.Parameter parameter : Config.parameters) {
+            for (Config.Parameter parameter : Config.PARAMETERS) {
                 description.printf("%s = %d\n", parameter.getName(), parameter.get());
             }
             description.printf("Change %s from %d to %d with step %d\n",
@@ -154,7 +154,7 @@ public final class ServerTestsMain {
                 sendToServer(ServerMain.REQUEST_OPEN);
                 final ExecutorService taskExecutor = Executors.newCachedThreadPool();
                 List<Future<Long>> results = new ArrayList<>();
-                for (int i = 0; i < Config.clientsCount.get(); i++) {
+                for (int i = 0; i < Config.CLIENTS_COUNT.get(); i++) {
                     results.add(taskExecutor.submit(() -> {
                         Timekeeper clientTimekeeper = new Timekeeper();
                         int timerId = clientTimekeeper.start();
@@ -173,7 +173,7 @@ public final class ServerTestsMain {
                 taskExecutor.shutdown();
 
                 long sum = 0;
-                for (int i = 0; i < Config.clientsCount.get(); i++) {
+                for (int i = 0; i < Config.CLIENTS_COUNT.get(); i++) {
                     try {
                         sum += results.get(i).get();
                     } catch (InterruptedException | ExecutionException e) {
@@ -182,7 +182,7 @@ public final class ServerTestsMain {
                 }
 
                 sendToServer(ServerMain.REQUEST_CLOSE);
-                double clientTime = (double) sum / Config.clientsCount.get();
+                double clientTime = (double) sum / Config.CLIENTS_COUNT.get();
 
                 requestHandleTimes.add(new XYChart.Data<>(changingValue, requestHandleTime));
                 requestHandleFile.printf("%d\t%f\n", changingValue, requestHandleTime);

@@ -15,7 +15,7 @@ public class UDPClient extends Client {
     public void run() {
         try (DatagramSocket socket = new DatagramSocket()) {
             socket.setSoTimeout(Config.UDP_TIMEOUT);
-            for (int r = 0; r < Config.requestsCount.get(); r++, hangOn()) {
+            for (int r = 0; r < Config.REQUESTS_COUNT.get(); r++, hangOn()) {
                 try {
                     try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                          DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {

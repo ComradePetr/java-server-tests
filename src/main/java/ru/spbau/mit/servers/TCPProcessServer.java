@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 public class TCPProcessServer extends TCPServer {
     private final Logger log = LogManager.getLogger(this);
-    private static final Path timekeepersDir = Paths.get("..", "timekeepers");
+    private static final Path TIMEKEEPERS_DIR = Paths.get("..", "timekeepers");
     private static Double requestHandleTime = null, clientHandleTime = null;
 
     public TCPProcessServer(RunnerType runnerType) {
@@ -84,7 +84,7 @@ public class TCPProcessServer extends TCPServer {
     }
 
     private void saveTimekeepers() throws FileNotFoundException {
-        File timekeeperFile = timekeepersDir.resolve(String.format("timekeepers-%d.txt", ServerMain.processNumber)).toFile();
+        File timekeeperFile = TIMEKEEPERS_DIR.resolve(String.format("timekeepers-%d.txt", ServerMain.processNumber)).toFile();
         try (PrintWriter printWriter = new PrintWriter(timekeeperFile)) {
             printWriter.printf("%d %d\n", requestTimekeeper.getSum(), clientTimekeeper.getSum());
         }
@@ -95,7 +95,7 @@ public class TCPProcessServer extends TCPServer {
         long requestHandleTimesSum = 0, clientHandleTimesSum = 0;
         int count = 0;
         try {
-            for (Path filePath : Files.walk(timekeepersDir).collect(Collectors.toList())) {
+            for (Path filePath : Files.walk(TIMEKEEPERS_DIR).collect(Collectors.toList())) {
                 if (Files.isRegularFile(filePath)) {
                     try (Scanner scanner = new Scanner(filePath)) {
                         long a = scanner.nextLong(), b = scanner.nextLong();
