@@ -18,6 +18,12 @@ import java.nio.file.Paths;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
+/**
+ * Сервер-обработчик для TCP-соединений, обрабатывает клиентов в разных процессах.
+ * Ожидает клиента, после чего запускает новый сервер, а сам осуществляет обработку клиента в текущем процессе.
+ * Статистика складывается в файл, соответствующий этому процессу;
+ * при закрытии сервера-обработчика он собирает эту статистику из файлов.
+ */
 public class TCPProcessServer extends TCPServer {
     private final Logger log = LogManager.getLogger(this);
     private static final Path TIMEKEEPERS_DIR = Paths.get("..", "timekeepers");

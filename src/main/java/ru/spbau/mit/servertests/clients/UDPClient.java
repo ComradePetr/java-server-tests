@@ -8,6 +8,9 @@ import ru.spbau.mit.servertests.Config;
 import java.io.*;
 import java.net.*;
 
+/**
+ * Класс UDP-клиента, отправляющего каждый запрос в своём пакете.
+ */
 public class UDPClient extends Client {
     private final Logger log = LogManager.getLogger(this);
 

@@ -11,6 +11,11 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 
+/**
+ * Сервер-обработчик для UDP-соединений.
+ * Ожидает клиента, после чего запускает обработчик для этого нового клиента, используя runner,
+ * и снова ждёт клиента.
+ */
 public class UDPServer extends Server {
     private final Logger log = LogManager.getLogger(this);
     private DatagramSocket serverSocket;

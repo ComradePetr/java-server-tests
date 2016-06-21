@@ -4,6 +4,10 @@ import ru.spbau.mit.servertests.ServerMain;
 
 import java.util.function.Consumer;
 
+/**
+ * Перечисление типов запуска обработчика клиента.
+ * Для каждого типа запуска хранится Consumer, который принимает Runnable, и запускает его.
+ */
 public enum RunnerType {
     MAIN_THREAD(Runnable::run),
     MANY_THREADS((r) -> new Thread(r).start()),

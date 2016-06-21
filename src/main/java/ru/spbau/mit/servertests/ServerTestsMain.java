@@ -25,6 +25,18 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
+/**
+ * Основной класс для запуска тестирования.
+ * Создаёт GUI-окно.
+ * По нажатию на соответствующую кнопку начинает тестирование (run)
+ * перебирает значение нужного параметра и на каждом значении:
+ * отправляет на сервер запрос на запуск сервера-обработчика нужной архитектуры,
+ * запускает клиентов в отдельных потоках,
+ * ждёт их завершения и получает от них статистику (сколько времени отработал клиент),
+ * отправляет на сервер запрос на закрытие сервера-обработчика, в ответ получает статистику
+ * (сколько времени обрабатывались клиенты и запросы в среднем),
+ * обновляет графики и пишет статистику в выходные файлы.
+ */
 public final class ServerTestsMain {
     private static final Logger LOG = LogManager.getLogger(ServerTestsMain.class);
     private static double requestHandleTime, clientHandleTime;

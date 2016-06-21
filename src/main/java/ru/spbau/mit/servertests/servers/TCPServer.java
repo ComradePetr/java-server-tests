@@ -13,6 +13,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
+/**
+ * Сервер-обработчик для TCP-соединений, обрабатывает клиентов в текущем процессе.
+ * Ожидает клиента, после чего запускает обработчик для этого нового клиента, используя runner,
+ * и снова ждёт клиента.
+ */
 public class TCPServer extends Server {
     private final Logger log = LogManager.getLogger(this);
     protected ServerSocket serverSocket;

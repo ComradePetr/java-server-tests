@@ -10,6 +10,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+/**
+ * Класс TCP-клиента, устанавливающего на каждый запрос новое соединение с сервером.
+ */
 public class TCPConnectionPerRequestClient extends Client {
     private final Logger log = LogManager.getLogger(this);
 

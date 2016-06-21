@@ -5,6 +5,11 @@ import ru.spbau.mit.servertests.architecture.ClientType;
 import ru.spbau.mit.servertests.architecture.RunnerType;
 import ru.spbau.mit.servertests.architecture.ServerType;
 
+/**
+ * Класс конфигурации.
+ * Хранит необходимые для работы программы значения и константы,
+ * виды поддерживаемых архитектур.
+ */
 public final class Config {
     public static final int MAIN_SERVER_PORT = 17238, SERVER_PORT = 17239;
     public static final int FIXED_THREAD_POOL_SIZE = 4;

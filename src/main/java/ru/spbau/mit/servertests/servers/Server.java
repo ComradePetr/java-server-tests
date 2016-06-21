@@ -13,6 +13,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * Абстрактный класс сервера-обработчика.
+ * Хранит группы секундомеров для подсчёта среднего времени обработки клиента и запроса.
+ * Хранит представителя RunnerType, который будет запускать переданного ему обработчика для очередного клиента.
+ * Имеет функции для кодирования-декодирования массива для поддержки protobuf,
+ * чтения массива из представителя DataInputStream и записи в представителя DataOutputStream,
+ * обработки (сортировки) массива с запуском и остановкой секундомера, отвечающего за обработку запросов.
+ */
 public abstract class Server {
     protected final RunnerType runner;
     protected final Timekeeper requestTimekeeper = new Timekeeper(), clientTimekeeper = new Timekeeper();

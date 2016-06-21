@@ -13,6 +13,12 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+/**
+ * Абстрактный класс клиента.
+ * Включает в себя функцию записи случайного массива в представителя DataOutputStream,
+ * функцию чтения присланного массива из представителя DataInputStream (используется protobuf),
+ * проверки массива на отсортированность и ожидания клиента в течение заданного промежутка времени.
+ */
 public abstract class Client {
     private final Logger log = LogManager.getLogger(this);
     private final Random rnd = new Random();

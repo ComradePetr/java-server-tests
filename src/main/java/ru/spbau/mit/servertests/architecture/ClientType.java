@@ -7,6 +7,9 @@ import ru.spbau.mit.servertests.clients.UDPClient;
 
 import java.util.function.Supplier;
 
+/**
+ * Перечисление типов клиентов. Про каждый тип клиента хранится конструктор его класса.
+ */
 public enum ClientType {
     TCPConnectionPerRequest(TCPConnectionPerRequestClient::new),
     TCPOneConnection(TCPOneConnectionClient::new),

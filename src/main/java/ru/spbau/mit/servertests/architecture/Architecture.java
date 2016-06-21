@@ -1,5 +1,9 @@
 package ru.spbau.mit.servertests.architecture;
 
+/**
+ * Класс архитектуры взаимодействия сервера-обработчика и клиента,
+ * хранит название архитектуры, тип сервера, способ запуска обработчика клиента и тип клиента.
+ */
 public class Architecture {
     public final ServerType serverType;
     public final RunnerType runnerType;

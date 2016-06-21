@@ -10,6 +10,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+/**
+ * Класс TCP-клиента, устанавливающего одно соединение с сервером на все запросы.
+ */
 public class TCPOneConnectionClient extends Client {
     private final Logger log = LogManager.getLogger(this);
 
