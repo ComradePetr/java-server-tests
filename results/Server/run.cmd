@@ -5,4 +5,4 @@ for /d %%i in (server-* timekeepers*) do (
 )
 mkdir server-1 timekeepers || exit
 cd server-1 || exit
-start java -cp ../ServerTests.jar ru.spbau.mit.ServerMain || exit
+start java -cp ../ServerTests.jar ru.spbau.mit.servertests.ServerMain || exit

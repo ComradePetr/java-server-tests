@@ -1,0 +1,7 @@
+package ru.spbau.mit;
+
+option java_outer_classname = "Protocol";
+
+message Array {
+    repeated fixed32 content = 1;
+}
