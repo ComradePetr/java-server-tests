@@ -18,7 +18,6 @@ public class TCPOneConnectionClient extends Client {
 
     @Override
     public void run() {
-        log.info("TRY TO CONNECT");
         try (Socket socket = new Socket(Config.serverAddress, Config.SERVER_PORT);
              DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
              DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream())) {

@@ -40,7 +40,6 @@ public class UDPClient extends Client {
                     } catch (SocketTimeoutException e) {
                         log.warn("Can't wait for response more than {} ms", Config.UDP_TIMEOUT);
                         log.warn(Throwables.getStackTraceAsString(e));
-                        continue;
                     }
                 } catch (IOException e) {
                     log.error(Throwables.getStackTraceAsString(e));
