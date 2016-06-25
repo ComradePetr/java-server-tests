@@ -33,14 +33,14 @@ public class UDPClient extends Client {
                     DatagramPacket packet = new DatagramPacket(byteArray, byteArray.length);
                     try {
                         socket.receive(packet);
+                        byte[] data = packet.getData();
+                        try (DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(data))) {
+                            checkArray(receiveArray(dataInputStream));
+                        }
                     } catch (SocketTimeoutException e) {
                         log.warn("Can't wait for response more than {} ms", Config.UDP_TIMEOUT);
                         log.warn(Throwables.getStackTraceAsString(e));
-                    }
-
-                    byte[] data = packet.getData();
-                    try (DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(data))) {
-                        checkArray(receiveArray(dataInputStream));
+                        continue;
                     }
                 } catch (IOException e) {
                     log.error(Throwables.getStackTraceAsString(e));

@@ -71,7 +71,7 @@ public class TCPProcessServer extends TCPServer {
             return;
         } catch (IOException | URISyntaxException e) {
             log.error(Throwables.getStackTraceAsString(e));
-        }finally {
+        } finally {
             close();
         }
     }
