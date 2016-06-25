@@ -38,14 +38,13 @@ public class TCPServer extends Server {
                 } catch (SocketException e) {
                     return;
                 }
-                int timerId = clientTimekeeper.start();
 
                 runner.run(() -> {
                     try (DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
                          DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream())) {
                         while (!socket.isClosed()) {
                             try {
-                                sendArray(handleArray(receiveArray(dataInputStream)), dataOutputStream);
+                                new ArrayHandler(true).receiveHandleSendArray(dataInputStream, dataOutputStream);
                             } catch (IOException e) {
                                 return;
                             }
@@ -53,7 +52,6 @@ public class TCPServer extends Server {
                     } catch (IOException e) {
                         log.error(Throwables.getStackTraceAsString(e));
                     } finally {
-                        clientTimekeeper.finish(timerId);
                         try {
                             socket.close();
                         } catch (IOException e) {

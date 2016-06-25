@@ -44,28 +44,29 @@ public class TCPProcessServer extends TCPServer {
             } catch (SocketException e) {
                 return;
             }
-            int timerId = clientTimekeeper.start();
             ServerMain.spawn();
-            try (DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-                 DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream())) {
-                while (!socket.isClosed()) {
-                    try {
-                        sendArray(handleArray(receiveArray(dataInputStream)), dataOutputStream);
-                    } catch (IOException e) {
-                        return;
+
+            runner.run(() -> {
+                try (DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
+                     DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream())) {
+                    while (!socket.isClosed()) {
+                        try {
+                            new ArrayHandler(true).receiveHandleSendArray(dataInputStream, dataOutputStream);
+                        } catch (IOException e) {
+                            return;
+                        }
                     }
-                }
-            } catch (IOException e) {
-                log.error(Throwables.getStackTraceAsString(e));
-            } finally {
-                clientTimekeeper.finish(timerId);
-                try {
-                    saveTimekeepers();
-                    socket.close();
                 } catch (IOException e) {
                     log.error(Throwables.getStackTraceAsString(e));
+                } finally {
+                    try {
+                        saveTimekeepers();
+                        socket.close();
+                    } catch (IOException e) {
+                        log.error(Throwables.getStackTraceAsString(e));
+                    }
                 }
-            }
+            });
         } catch (SocketException e) {
             return;
         } catch (IOException | URISyntaxException e) {
@@ -92,19 +93,19 @@ public class TCPProcessServer extends TCPServer {
     private void saveTimekeepers() throws FileNotFoundException {
         File timekeeperFile = TIMEKEEPERS_DIR.resolve(String.format("timekeepers-%d.txt", ServerMain.processNumber)).toFile();
         try (PrintWriter printWriter = new PrintWriter(timekeeperFile)) {
-            printWriter.printf("%d %d\n", requestTimekeeper.getSum(), clientTimekeeper.getSum());
+            printWriter.printf("%f %f\n", requestTimekeeper.getAverage(), clientTimekeeper.getAverage());
         }
     }
 
     private void loadTimekeepers() {
         requestHandleTime = clientHandleTime = 0.0;
-        long requestHandleTimesSum = 0, clientHandleTimesSum = 0;
+        double requestHandleTimesSum = 0, clientHandleTimesSum = 0;
         int count = 0;
         try {
             for (Path filePath : Files.walk(TIMEKEEPERS_DIR).collect(Collectors.toList())) {
                 if (Files.isRegularFile(filePath)) {
                     try (Scanner scanner = new Scanner(filePath)) {
-                        long a = scanner.nextLong(), b = scanner.nextLong();
+                        double a = scanner.nextDouble(), b = scanner.nextDouble();
                         requestHandleTimesSum += a;
                         clientHandleTimesSum += b;
                         log.info("I read from {} : {} {}", filePath.toString(), a, b);
@@ -114,8 +115,8 @@ public class TCPProcessServer extends TCPServer {
                 }
             }
             if (count > 0) {
-                requestHandleTime = (double) requestHandleTimesSum / count;
-                clientHandleTime = (double) clientHandleTimesSum / count;
+                requestHandleTime = requestHandleTimesSum / count;
+                clientHandleTime = clientHandleTimesSum / count;
             }
         } catch (IOException e) {
             log.error(Throwables.getStackTraceAsString(e));

@@ -35,42 +35,61 @@ public abstract class Server {
     public abstract void close();
 
     public double requestHandleTime() {
-        return requestTimekeeper.average();
+        return requestTimekeeper.getAverage();
     }
 
     public double clientHandleTime() {
-        return clientTimekeeper.average();
+        return clientTimekeeper.getAverage();
     }
 
-    protected ArrayList<Integer> decode(byte[] byteArray) throws InvalidProtocolBufferException {
-        return new ArrayList<>(Protocol.Array.parseFrom(byteArray).getContentList());
-    }
+    protected class ArrayHandler {
+        private int timerId;
+        private boolean needClientTimekeeper;
 
-    protected byte[] encode(ArrayList<Integer> array) {
-        return Protocol.Array.newBuilder().addAllContent(array).build().toByteArray();
-    }
+        public ArrayHandler(boolean needClientTimekeeper) {
+            this.needClientTimekeeper = needClientTimekeeper;
+        }
 
-    protected ArrayList<Integer> receiveArray(DataInputStream dataInputStream) throws IOException {
-        int size = dataInputStream.readInt();
-        byte[] byteArray = new byte[size];
-        dataInputStream.readFully(byteArray);
-        return decode(byteArray);
-    }
+        public ArrayList<Integer> decode(byte[] byteArray) throws InvalidProtocolBufferException {
+            return new ArrayList<>(Protocol.Array.parseFrom(byteArray).getContentList());
+        }
 
-    protected ArrayList<Integer> handleArray(ArrayList<Integer> array) {
-        int timerId = requestTimekeeper.start();
-        Collections.sort(array);
-        log.info("Server just sorted array (size = {})", array.size());
-        requestTimekeeper.finish(timerId);
-        return array;
-    }
+        public byte[] encode(ArrayList<Integer> array) {
+            return Protocol.Array.newBuilder().addAllContent(array).build().toByteArray();
+        }
 
-    protected void sendArray(ArrayList<Integer> array, DataOutputStream dataOutputStream) throws IOException {
-        byte[] byteArray = encode(array);
-        dataOutputStream.writeInt(byteArray.length);
-        dataOutputStream.write(byteArray);
-        dataOutputStream.flush();
+        public ArrayList<Integer> receiveArray(DataInputStream dataInputStream) throws IOException {
+            int size = dataInputStream.readInt();
+            if (needClientTimekeeper) {
+                timerId = clientTimekeeper.start();
+            }
+            byte[] byteArray = new byte[size];
+            dataInputStream.readFully(byteArray);
+            return decode(byteArray);
+        }
 
-        log.info("I just wrote array (size = {})", array.size());
+        public ArrayList<Integer> handleArray(ArrayList<Integer> array) {
+            int timerId = requestTimekeeper.start();
+            Collections.sort(array);
+            log.info("Server just sorted array (size = {})", array.size());
+            requestTimekeeper.finish(timerId);
+            return array;
+        }
+
+        public void sendArray(ArrayList<Integer> array, DataOutputStream dataOutputStream) throws IOException {
+            byte[] byteArray = encode(array);
+            dataOutputStream.writeInt(byteArray.length);
+            dataOutputStream.write(byteArray);
+            dataOutputStream.flush();
+            if (needClientTimekeeper) {
+                clientTimekeeper.finish(timerId);
+            }
+
+            log.info("I just wrote array (size = {})", array.size());
+        }
+
+        public void receiveHandleSendArray(DataInputStream dataInputStream, DataOutputStream dataOutputStream) throws IOException {
+            sendArray(handleArray(receiveArray(dataInputStream)), dataOutputStream);
+        }
     }
 }

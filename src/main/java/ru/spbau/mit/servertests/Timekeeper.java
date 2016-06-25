@@ -29,7 +29,7 @@ public class Timekeeper {
         return sum;
     }
 
-    public double average() {
+    public double getAverage() {
         return (double) sum / startTime.size();
     }
 }

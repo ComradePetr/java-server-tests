@@ -46,7 +46,7 @@ public class UDPServer extends Server {
                     try (DataInputStream dataInputStream = new DataInputStream(new ByteArrayInputStream(data));
                          ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                          DataOutputStream dataOutputStream = new DataOutputStream(byteArrayOutputStream)) {
-                        sendArray(handleArray(receiveArray(dataInputStream)), dataOutputStream);
+                        new ArrayHandler(false).receiveHandleSendArray(dataInputStream, dataOutputStream);
                         data = byteArrayOutputStream.toByteArray();
                         DatagramPacket packetResponse = new DatagramPacket(data, data.length, packet.getAddress(), packet.getPort());
                         serverSocket.send(packetResponse);

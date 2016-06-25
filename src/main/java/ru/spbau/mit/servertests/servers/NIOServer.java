@@ -49,8 +49,7 @@ public class NIOServer extends Server {
                         if (selectionKey.isAcceptable()) {
                             SocketChannel socketChannel = ((ServerSocketChannel) selectionKey.channel()).accept();
                             socketChannel.configureBlocking(false);
-                            socketChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE,
-                                    new ClientData(clientTimekeeper.start()));
+                            socketChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE, new ClientData());
                         } else {
                             final ClientData clientData;
                             synchronized (selectionKey) {
@@ -60,10 +59,11 @@ public class NIOServer extends Server {
                                 int read = clientData.read((SocketChannel) selectionKey.channel());
                                 if (read == 0) {
                                     runner.run(() -> {
+                                        ArrayHandler arrayHandler = new ArrayHandler(false);
                                         try {
-                                            ClientData newClientData = new ClientData(
-                                                    clientData.timerId, encode(handleArray(decode(clientData.getByteArray())))
-                                            );
+                                            ClientData newClientData = new ClientData(clientData,
+                                                    arrayHandler.encode(arrayHandler.handleArray(
+                                                            arrayHandler.decode(clientData.getByteArray()))));
                                             synchronized (selectionKey) {
                                                 selectionKey.attach(newClientData);
                                             }
@@ -72,12 +72,12 @@ public class NIOServer extends Server {
                                         }
                                     });
                                 } else if (read == -1) {
-                                    clientTimekeeper.finish(clientData.timerId);
-                                    selectionKey.interestOps(0);
+                                    selectionKey.cancel();
                                 }
                             } else if (selectionKey.isWritable() && clientData.writeMode) {
                                 if (!clientData.write((SocketChannel) selectionKey.channel())) {
-                                    selectionKey.attach(new ClientData(clientData.timerId));
+                                    clientTimekeeper.finish(clientData.timerId);
+                                    selectionKey.attach(new ClientData());
                                 }
                             }
                         }
@@ -106,14 +106,12 @@ public class NIOServer extends Server {
         private ByteBuffer sizeBuffer, dataBuffer;
         private boolean writeMode;
 
-        public ClientData(int timerId) {
-            this.timerId = timerId;
-            sizeBuffer = ByteBuffer.allocate(Integer.BYTES);
+        public ClientData() {
             writeMode = false;
         }
 
-        public ClientData(int timerId, byte[] byteArray) {
-            this.timerId = timerId;
+        public ClientData(ClientData clientData, byte[] byteArray) {
+            timerId = clientData.timerId;
             dataBuffer = ByteBuffer.allocate(Integer.BYTES + byteArray.length);
             dataBuffer.putInt(byteArray.length);
             dataBuffer.put(byteArray);
@@ -124,6 +122,10 @@ public class NIOServer extends Server {
         public int read(SocketChannel socketChannel) throws IOException {
             int wasRead;
             do {
+                if (sizeBuffer == null) {
+                    timerId = clientTimekeeper.start();
+                    sizeBuffer = ByteBuffer.allocate(Integer.BYTES);
+                }
                 if (sizeBuffer.hasRemaining()) {
                     wasRead = socketChannel.read(sizeBuffer);
                 } else {
@@ -138,7 +140,7 @@ public class NIOServer extends Server {
             if (wasRead == -1) {
                 return -1;
             }
-            return sizeBuffer.hasRemaining() || dataBuffer == null || dataBuffer.hasRemaining() ? 1 : 0;
+            return sizeBuffer == null || sizeBuffer.hasRemaining() || dataBuffer == null || dataBuffer.hasRemaining() ? 1 : 0;
         }
 
         public byte[] getByteArray() {
