@@ -46,7 +46,7 @@ public final class ServerMain {
     private static RunnerType runnerType;
     private static boolean closed = false;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         if (args.length != 0) {
             processNumber = Integer.parseInt(args[0]);
             serverType = ServerType.values()[Integer.parseInt(args[1])];
@@ -55,38 +55,45 @@ public final class ServerMain {
         }
 
         LOG.info("I will occupy {}", Config.MAIN_SERVER_PORT);
-        try (ServerSocket serverSocket = new ServerSocket(Config.MAIN_SERVER_PORT)) {
-            synchronized (ServerMain.class) {
-                ServerMain.serverSocket = serverSocket;
+        synchronized (ServerMain.class) {
+            try {
+                serverSocket = new ServerSocket(Config.MAIN_SERVER_PORT);
+            } catch (IOException e) {
+                LOG.error(Throwables.getStackTraceAsString(e));
+                return;
             }
+        }
 
-            while (!closed) {
-                try (Socket socket = serverSocket.accept();
-                     DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
-                     DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream())) {
-                    int requestType = dataInputStream.readInt();
-                    LOG.info("type = {}", requestType);
-                    if (requestType == REQUEST_OPEN) {
-                        serverType = ServerType.values()[dataInputStream.readInt()];
-                        runnerType = RunnerType.values()[dataInputStream.readInt()];
-                        LOG.info("server = {}, runner = {}", serverType, runnerType);
+        while (!closed) {
+            try (Socket socket = serverSocket.accept();
+                 DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
+                 DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream())) {
+                int requestType = dataInputStream.readInt();
+                LOG.info("type = {}", requestType);
+                if (requestType == REQUEST_OPEN) {
+                    serverType = ServerType.values()[dataInputStream.readInt()];
+                    runnerType = RunnerType.values()[dataInputStream.readInt()];
+                    LOG.info("server = {}, runner = {}", serverType, runnerType);
 
-                        stop();
-                        run();
-                        dataOutputStream.writeInt(CONFIRM_SIGNAL);
-                    } else {
-                        LOG.info("{} {}", server.requestHandleTime(), server.clientHandleTime());
-                        dataOutputStream.writeDouble(server.requestHandleTime());
-                        dataOutputStream.writeDouble(server.clientHandleTime());
-                        stop();
-                    }
-                    dataOutputStream.flush();
-                } catch (SocketException e) {
-                    break;
-                } catch (IOException e) {
-                    LOG.error(Throwables.getStackTraceAsString(e));
+                    stop();
+                    run();
+                    dataOutputStream.writeInt(CONFIRM_SIGNAL);
+                } else {
+                    LOG.info("{} {}", server.requestHandleTime(), server.clientHandleTime());
+                    dataOutputStream.writeDouble(server.requestHandleTime());
+                    dataOutputStream.writeDouble(server.clientHandleTime());
+                    stop();
                 }
+                dataOutputStream.flush();
+            } catch (SocketException e) {
+                break;
+            } catch (IOException e) {
+                LOG.error(Throwables.getStackTraceAsString(e));
             }
+        }
+
+        try {
+            serverSocket.close();
         } catch (IOException e) {
             LOG.error(Throwables.getStackTraceAsString(e));
         }

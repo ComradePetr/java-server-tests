@@ -29,8 +29,8 @@ public class TCPServer extends Server {
     @Override
     public void run() {
         log.info("I will occupy {}", Config.SERVER_PORT);
-        try (ServerSocket serverSocket = new ServerSocket(Config.SERVER_PORT)) {
-            this.serverSocket = serverSocket;
+        try {
+            serverSocket = new ServerSocket(Config.SERVER_PORT);
             while (true) {
                 Socket socket;
                 try {
@@ -64,6 +64,8 @@ public class TCPServer extends Server {
             return;
         } catch (IOException e) {
             log.error(Throwables.getStackTraceAsString(e));
+        } finally {
+            close();
         }
     }
 
@@ -73,7 +75,7 @@ public class TCPServer extends Server {
             try {
                 serverSocket.close();
             } catch (IOException e) {
-                return;
+                log.error(Throwables.getStackTraceAsString(e));
             }
         }
     }

@@ -27,8 +27,8 @@ public class UDPServer extends Server {
     @Override
     public void run() {
         log.info("I will occupy {}", Config.SERVER_PORT);
-        try (DatagramSocket serverSocket = new DatagramSocket(Config.SERVER_PORT)) {
-            this.serverSocket = serverSocket;
+        try {
+            serverSocket = new DatagramSocket(Config.SERVER_PORT);
             while (!serverSocket.isClosed()) {
                 byte[] byteArray = new byte[Config.UDP_PACKET_MAX_SIZE];
                 final DatagramPacket packet = new DatagramPacket(byteArray, byteArray.length);
@@ -59,6 +59,8 @@ public class UDPServer extends Server {
             }
         } catch (SocketException e) {
             log.error(Throwables.getStackTraceAsString(e));
+        } finally {
+            close();
         }
     }
 

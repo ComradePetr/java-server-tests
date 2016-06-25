@@ -36,8 +36,8 @@ public class TCPProcessServer extends TCPServer {
     @Override
     public void run() {
         log.info("I will occupy {}", Config.SERVER_PORT);
-        try (ServerSocket serverSocket = new ServerSocket(Config.SERVER_PORT)) {
-            this.serverSocket = serverSocket;
+        try {
+            serverSocket = new ServerSocket(Config.SERVER_PORT);
             Socket socket;
             try {
                 socket = serverSocket.accept();
@@ -71,6 +71,8 @@ public class TCPProcessServer extends TCPServer {
             return;
         } catch (IOException | URISyntaxException e) {
             log.error(Throwables.getStackTraceAsString(e));
+        }finally {
+            close();
         }
     }
 
