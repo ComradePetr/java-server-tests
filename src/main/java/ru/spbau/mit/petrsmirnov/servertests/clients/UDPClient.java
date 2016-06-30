@@ -1,9 +1,9 @@
-package ru.spbau.mit.servertests.clients;
+package ru.spbau.mit.petrsmirnov.servertests.clients;
 
 import com.google.common.base.Throwables;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.spbau.mit.servertests.Config;
+import ru.spbau.mit.petrsmirnov.servertests.Config;
 
 import java.io.*;
 import java.net.*;

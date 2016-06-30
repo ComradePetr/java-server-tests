@@ -1,4 +1,4 @@
-package ru.spbau.mit.servertests.architecture;
+package ru.spbau.mit.petrsmirnov.servertests.architecture;
 
 /**
  * Класс архитектуры взаимодействия сервера-обработчика и клиента,

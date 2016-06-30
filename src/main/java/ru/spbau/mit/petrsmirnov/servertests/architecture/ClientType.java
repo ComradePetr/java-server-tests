@@ -1,9 +1,9 @@
-package ru.spbau.mit.servertests.architecture;
+package ru.spbau.mit.petrsmirnov.servertests.architecture;
 
-import ru.spbau.mit.servertests.clients.Client;
-import ru.spbau.mit.servertests.clients.TCPConnectionPerRequestClient;
-import ru.spbau.mit.servertests.clients.TCPOneConnectionClient;
-import ru.spbau.mit.servertests.clients.UDPClient;
+import ru.spbau.mit.petrsmirnov.servertests.clients.Client;
+import ru.spbau.mit.petrsmirnov.servertests.clients.TCPConnectionPerRequestClient;
+import ru.spbau.mit.petrsmirnov.servertests.clients.TCPOneConnectionClient;
+import ru.spbau.mit.petrsmirnov.servertests.clients.UDPClient;
 
 import java.util.function.Supplier;
 

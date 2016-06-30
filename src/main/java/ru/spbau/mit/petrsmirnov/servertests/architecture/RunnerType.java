@@ -1,6 +1,6 @@
-package ru.spbau.mit.servertests.architecture;
+package ru.spbau.mit.petrsmirnov.servertests.architecture;
 
-import ru.spbau.mit.servertests.ServerMain;
+import ru.spbau.mit.petrsmirnov.servertests.ServerMain;
 
 import java.util.function.Consumer;
 

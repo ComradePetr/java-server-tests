@@ -1,11 +1,11 @@
-package ru.spbau.mit.servertests.servers;
+package ru.spbau.mit.petrsmirnov.servertests.servers;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.spbau.mit.servertests.Protocol;
-import ru.spbau.mit.servertests.Timekeeper;
-import ru.spbau.mit.servertests.architecture.RunnerType;
+import ru.spbau.mit.petrsmirnov.servertests.Protocol;
+import ru.spbau.mit.petrsmirnov.servertests.Timekeeper;
+import ru.spbau.mit.petrsmirnov.servertests.architecture.RunnerType;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

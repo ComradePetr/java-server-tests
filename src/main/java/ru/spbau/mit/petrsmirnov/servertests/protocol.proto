@@ -1,4 +1,4 @@
-package ru.spbau.mit.servertests;
+package ru.spbau.mit.petrsmirnov.servertests;
 
 option java_outer_classname = "Protocol";
 

@@ -1,4 +1,4 @@
-package ru.spbau.mit.servertests;
+package ru.spbau.mit.petrsmirnov.servertests;
 
 import com.google.common.base.Throwables;
 import javafx.application.Platform;
@@ -10,8 +10,8 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ru.spbau.mit.servertests.architecture.Architecture;
-import ru.spbau.mit.servertests.architecture.ServerType;
+import ru.spbau.mit.petrsmirnov.servertests.architecture.Architecture;
+import ru.spbau.mit.petrsmirnov.servertests.architecture.ServerType;
 
 import javax.swing.*;
 import java.awt.*;

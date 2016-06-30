@@ -1,9 +1,9 @@
-package ru.spbau.mit.servertests;
+package ru.spbau.mit.petrsmirnov.servertests;
 
-import ru.spbau.mit.servertests.architecture.Architecture;
-import ru.spbau.mit.servertests.architecture.ClientType;
-import ru.spbau.mit.servertests.architecture.RunnerType;
-import ru.spbau.mit.servertests.architecture.ServerType;
+import ru.spbau.mit.petrsmirnov.servertests.architecture.Architecture;
+import ru.spbau.mit.petrsmirnov.servertests.architecture.ClientType;
+import ru.spbau.mit.petrsmirnov.servertests.architecture.RunnerType;
+import ru.spbau.mit.petrsmirnov.servertests.architecture.ServerType;
 
 /**
  * Класс конфигурации.

@@ -1,4 +1,4 @@
-package ru.spbau.mit.servertests;
+package ru.spbau.mit.petrsmirnov.servertests;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
