@@ -38,6 +38,7 @@ public class UDPServer extends Server {
                     return;
                 } catch (IOException e) {
                     log.error(Throwables.getStackTraceAsString(e));
+                    continue;
                 }
                 int timerId = clientTimekeeper.start();
 
@@ -50,10 +51,9 @@ public class UDPServer extends Server {
                         data = byteArrayOutputStream.toByteArray();
                         DatagramPacket packetResponse = new DatagramPacket(data, data.length, packet.getAddress(), packet.getPort());
                         serverSocket.send(packetResponse);
+                        clientTimekeeper.finish(timerId);
                     } catch (IOException e) {
                         log.error(Throwables.getStackTraceAsString(e));
-                    } finally {
-                        clientTimekeeper.finish(timerId);
                     }
                 });
             }

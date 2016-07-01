@@ -9,7 +9,7 @@ public final class Protocol {
       com.google.protobuf.ExtensionRegistry registry) {
   }
   public interface ArrayOrBuilder extends
-      // @@protoc_insertion_point(interface_extends:ru.spbau.mit.servertests.Array)
+      // @@protoc_insertion_point(interface_extends:ru.spbau.mit.petrsmirnov.servertests.Array)
       com.google.protobuf.MessageOrBuilder {
 
     /**
@@ -26,11 +26,11 @@ public final class Protocol {
     int getContent(int index);
   }
   /**
-   * Protobuf type {@code ru.spbau.mit.servertests.Array}
+   * Protobuf type {@code ru.spbau.mit.petrsmirnov.servertests.Array}
    */
   public static final class Array extends
       com.google.protobuf.GeneratedMessage implements
-      // @@protoc_insertion_point(message_implements:ru.spbau.mit.servertests.Array)
+      // @@protoc_insertion_point(message_implements:ru.spbau.mit.petrsmirnov.servertests.Array)
       ArrayOrBuilder {
     // Use Array.newBuilder() to construct.
     private Array(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
@@ -115,14 +115,14 @@ public final class Protocol {
     }
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return Protocol.internal_static_ru_spbau_mit_servertests_Array_descriptor;
+      return ru.spbau.mit.petrsmirnov.servertests.Protocol.internal_static_ru_spbau_mit_petrsmirnov_servertests_Array_descriptor;
     }
 
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return Protocol.internal_static_ru_spbau_mit_servertests_Array_fieldAccessorTable
+      return ru.spbau.mit.petrsmirnov.servertests.Protocol.internal_static_ru_spbau_mit_petrsmirnov_servertests_Array_fieldAccessorTable
           .ensureFieldAccessorsInitialized(
-              Protocol.Array.class, Protocol.Array.Builder.class);
+              ru.spbau.mit.petrsmirnov.servertests.Protocol.Array.class, ru.spbau.mit.petrsmirnov.servertests.Protocol.Array.Builder.class);
     }
 
     public static com.google.protobuf.Parser<Array> PARSER =
@@ -208,53 +208,53 @@ public final class Protocol {
       return super.writeReplace();
     }
 
-    public static Protocol.Array parseFrom(
+    public static ru.spbau.mit.petrsmirnov.servertests.Protocol.Array parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static Protocol.Array parseFrom(
+    public static ru.spbau.mit.petrsmirnov.servertests.Protocol.Array parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static Protocol.Array parseFrom(byte[] data)
+    public static ru.spbau.mit.petrsmirnov.servertests.Protocol.Array parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data);
     }
-    public static Protocol.Array parseFrom(
+    public static ru.spbau.mit.petrsmirnov.servertests.Protocol.Array parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
       return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static Protocol.Array parseFrom(java.io.InputStream input)
+    public static ru.spbau.mit.petrsmirnov.servertests.Protocol.Array parseFrom(java.io.InputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
-    public static Protocol.Array parseFrom(
+    public static ru.spbau.mit.petrsmirnov.servertests.Protocol.Array parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseFrom(input, extensionRegistry);
     }
-    public static Protocol.Array parseDelimitedFrom(java.io.InputStream input)
+    public static ru.spbau.mit.petrsmirnov.servertests.Protocol.Array parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input);
     }
-    public static Protocol.Array parseDelimitedFrom(
+    public static ru.spbau.mit.petrsmirnov.servertests.Protocol.Array parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
       return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
-    public static Protocol.Array parseFrom(
+    public static ru.spbau.mit.petrsmirnov.servertests.Protocol.Array parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
       return PARSER.parseFrom(input);
     }
-    public static Protocol.Array parseFrom(
+    public static ru.spbau.mit.petrsmirnov.servertests.Protocol.Array parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
@@ -263,7 +263,7 @@ public final class Protocol {
 
     public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(Protocol.Array prototype) {
+    public static Builder newBuilder(ru.spbau.mit.petrsmirnov.servertests.Protocol.Array prototype) {
       return newBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() { return newBuilder(this); }
@@ -275,25 +275,25 @@ public final class Protocol {
       return builder;
     }
     /**
-     * Protobuf type {@code ru.spbau.mit.servertests.Array}
+     * Protobuf type {@code ru.spbau.mit.petrsmirnov.servertests.Array}
      */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder> implements
-        // @@protoc_insertion_point(builder_implements:ru.spbau.mit.servertests.Array)
-        Protocol.ArrayOrBuilder {
+        // @@protoc_insertion_point(builder_implements:ru.spbau.mit.petrsmirnov.servertests.Array)
+        ru.spbau.mit.petrsmirnov.servertests.Protocol.ArrayOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return Protocol.internal_static_ru_spbau_mit_servertests_Array_descriptor;
+        return ru.spbau.mit.petrsmirnov.servertests.Protocol.internal_static_ru_spbau_mit_petrsmirnov_servertests_Array_descriptor;
       }
 
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return Protocol.internal_static_ru_spbau_mit_servertests_Array_fieldAccessorTable
+        return ru.spbau.mit.petrsmirnov.servertests.Protocol.internal_static_ru_spbau_mit_petrsmirnov_servertests_Array_fieldAccessorTable
             .ensureFieldAccessorsInitialized(
-                Protocol.Array.class, Protocol.Array.Builder.class);
+                ru.spbau.mit.petrsmirnov.servertests.Protocol.Array.class, ru.spbau.mit.petrsmirnov.servertests.Protocol.Array.Builder.class);
       }
 
-      // Construct using Protocol.Array.newBuilder()
+      // Construct using ru.spbau.mit.petrsmirnov.servertests.Protocol.Array.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
@@ -324,23 +324,23 @@ public final class Protocol {
 
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return Protocol.internal_static_ru_spbau_mit_servertests_Array_descriptor;
+        return ru.spbau.mit.petrsmirnov.servertests.Protocol.internal_static_ru_spbau_mit_petrsmirnov_servertests_Array_descriptor;
       }
 
-      public Protocol.Array getDefaultInstanceForType() {
-        return Protocol.Array.getDefaultInstance();
+      public ru.spbau.mit.petrsmirnov.servertests.Protocol.Array getDefaultInstanceForType() {
+        return ru.spbau.mit.petrsmirnov.servertests.Protocol.Array.getDefaultInstance();
       }
 
-      public Protocol.Array build() {
-        Protocol.Array result = buildPartial();
+      public ru.spbau.mit.petrsmirnov.servertests.Protocol.Array build() {
+        ru.spbau.mit.petrsmirnov.servertests.Protocol.Array result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
 
-      public Protocol.Array buildPartial() {
-        Protocol.Array result = new Protocol.Array(this);
+      public ru.spbau.mit.petrsmirnov.servertests.Protocol.Array buildPartial() {
+        ru.spbau.mit.petrsmirnov.servertests.Protocol.Array result = new ru.spbau.mit.petrsmirnov.servertests.Protocol.Array(this);
         int from_bitField0_ = bitField0_;
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
           content_ = java.util.Collections.unmodifiableList(content_);
@@ -352,16 +352,16 @@ public final class Protocol {
       }
 
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof Protocol.Array) {
-          return mergeFrom((Protocol.Array)other);
+        if (other instanceof ru.spbau.mit.petrsmirnov.servertests.Protocol.Array) {
+          return mergeFrom((ru.spbau.mit.petrsmirnov.servertests.Protocol.Array)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
 
-      public Builder mergeFrom(Protocol.Array other) {
-        if (other == Protocol.Array.getDefaultInstance()) return this;
+      public Builder mergeFrom(ru.spbau.mit.petrsmirnov.servertests.Protocol.Array other) {
+        if (other == ru.spbau.mit.petrsmirnov.servertests.Protocol.Array.getDefaultInstance()) return this;
         if (!other.content_.isEmpty()) {
           if (content_.isEmpty()) {
             content_ = other.content_;
@@ -384,11 +384,11 @@ public final class Protocol {
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        Protocol.Array parsedMessage = null;
+        ru.spbau.mit.petrsmirnov.servertests.Protocol.Array parsedMessage = null;
         try {
           parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
         } catch (com.google.protobuf.InvalidProtocolBufferException e) {
-          parsedMessage = (Protocol.Array) e.getUnfinishedMessage();
+          parsedMessage = (ru.spbau.mit.petrsmirnov.servertests.Protocol.Array) e.getUnfinishedMessage();
           throw e;
         } finally {
           if (parsedMessage != null) {
@@ -465,7 +465,7 @@ public final class Protocol {
         return this;
       }
 
-      // @@protoc_insertion_point(builder_scope:ru.spbau.mit.servertests.Array)
+      // @@protoc_insertion_point(builder_scope:ru.spbau.mit.petrsmirnov.servertests.Array)
     }
 
     static {
@@ -473,14 +473,14 @@ public final class Protocol {
       defaultInstance.initFields();
     }
 
-    // @@protoc_insertion_point(class_scope:ru.spbau.mit.servertests.Array)
+    // @@protoc_insertion_point(class_scope:ru.spbau.mit.petrsmirnov.servertests.Array)
   }
 
   private static final com.google.protobuf.Descriptors.Descriptor
-    internal_static_ru_spbau_mit_servertests_Array_descriptor;
+    internal_static_ru_spbau_mit_petrsmirnov_servertests_Array_descriptor;
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
-      internal_static_ru_spbau_mit_servertests_Array_fieldAccessorTable;
+      internal_static_ru_spbau_mit_petrsmirnov_servertests_Array_fieldAccessorTable;
 
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
@@ -490,8 +490,9 @@ public final class Protocol {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\016protocol.proto\022\030ru.spbau.mit.servertes" +
-      "ts\"\030\n\005Array\022\017\n\007content\030\001 \003(\007B\nB\010Protocol"
+      "\n\016protocol.proto\022$ru.spbau.mit.petrsmirn" +
+      "ov.servertests\"\030\n\005Array\022\017\n\007content\030\001 \003(\007" +
+      "B\nB\010Protocol"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -505,11 +506,11 @@ public final class Protocol {
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         }, assigner);
-    internal_static_ru_spbau_mit_servertests_Array_descriptor =
+    internal_static_ru_spbau_mit_petrsmirnov_servertests_Array_descriptor =
       getDescriptor().getMessageTypes().get(0);
-    internal_static_ru_spbau_mit_servertests_Array_fieldAccessorTable = new
+    internal_static_ru_spbau_mit_petrsmirnov_servertests_Array_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
-        internal_static_ru_spbau_mit_servertests_Array_descriptor,
+        internal_static_ru_spbau_mit_petrsmirnov_servertests_Array_descriptor,
         new java.lang.String[] { "Content", });
   }
 

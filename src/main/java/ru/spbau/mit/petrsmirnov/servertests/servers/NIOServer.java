@@ -41,51 +41,72 @@ public class NIOServer extends Server {
             serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT);
 
             while (selector.isOpen() && serverSocketChannel.isOpen()) {
-                selector.select();
-                for (Iterator<SelectionKey> iterator = selector.selectedKeys().iterator(); iterator.hasNext(); iterator.remove()) {
-                    final SelectionKey selectionKey = iterator.next();
+                try {
+                    selector.select();
+                    for (Iterator<SelectionKey> iterator = selector.selectedKeys().iterator(); iterator.hasNext(); iterator.remove()) {
+                        final SelectionKey selectionKey = iterator.next();
 
-                    if (selectionKey.isValid()) {
-                        if (selectionKey.isAcceptable()) {
-                            SocketChannel socketChannel = ((ServerSocketChannel) selectionKey.channel()).accept();
-                            socketChannel.configureBlocking(false);
-                            socketChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE, new ClientData());
-                        } else {
-                            final ClientData clientData;
-                            synchronized (selectionKey) {
-                                clientData = (ClientData) selectionKey.attachment();
-                            }
-                            if (selectionKey.isReadable() && !clientData.writeMode) {
-                                int read = clientData.read((SocketChannel) selectionKey.channel());
-                                if (read == 0) {
-                                    runner.run(() -> {
-                                        ArrayHandler arrayHandler = new ArrayHandler(false);
-                                        try {
-                                            ClientData newClientData = new ClientData(clientData,
-                                                    arrayHandler.encode(arrayHandler.handleArray(
-                                                            arrayHandler.decode(clientData.getByteArray()))));
-                                            synchronized (selectionKey) {
-                                                selectionKey.attach(newClientData);
-                                            }
-                                        } catch (IOException e) {
-                                            return;
-                                        }
-                                    });
-                                } else if (read == -1) {
-                                    selectionKey.cancel();
+                        if (selectionKey.isValid()) {
+                            if (selectionKey.isAcceptable()) {
+                                try {
+                                    SocketChannel socketChannel = ((ServerSocketChannel) selectionKey.channel()).accept();
+                                    socketChannel.configureBlocking(false);
+                                    socketChannel.register(selector, SelectionKey.OP_READ | SelectionKey.OP_WRITE, new ClientData());
+                                } catch (IOException e) {
+                                    log.error(Throwables.getStackTraceAsString(e));
                                 }
-                            } else if (selectionKey.isWritable() && clientData.writeMode) {
-                                if (!clientData.write((SocketChannel) selectionKey.channel())) {
-                                    clientTimekeeper.finish(clientData.timerId);
-                                    selectionKey.attach(new ClientData());
+                            } else {
+                                final ClientData clientData;
+                                synchronized (selectionKey) {
+                                    clientData = (ClientData) selectionKey.attachment();
+                                }
+                                if (selectionKey.isReadable() && !clientData.writeMode) {
+                                    try {
+                                        int read = clientData.read((SocketChannel) selectionKey.channel());
+                                        if (read == 0) {
+                                            runner.run(() -> {
+                                                ArrayHandler arrayHandler = new ArrayHandler(false);
+                                                try {
+                                                    ClientData newClientData = new ClientData(clientData,
+                                                            arrayHandler.encode(arrayHandler.handleArray(
+                                                                    arrayHandler.decode(clientData.getByteArray()))));
+                                                    synchronized (selectionKey) {
+                                                        selectionKey.attach(newClientData);
+                                                    }
+                                                } catch (IOException e) {
+                                                    log.error(Throwables.getStackTraceAsString(e));
+                                                    synchronized (selectionKey) {
+                                                        selectionKey.cancel();
+                                                    }
+                                                }
+                                            });
+                                        } else if (read == -1) {
+                                            selectionKey.cancel();
+                                        }
+                                    } catch (IOException e) {
+                                        log.error(Throwables.getStackTraceAsString(e));
+                                        selectionKey.cancel();
+                                    }
+                                } else if (selectionKey.isWritable() && clientData.writeMode) {
+                                    try {
+                                        if (!clientData.write((SocketChannel) selectionKey.channel())) {
+                                            clientTimekeeper.finish(clientData.timerId);
+                                            selectionKey.attach(new ClientData());
+                                        }
+                                    } catch (IOException e) {
+                                        log.error(Throwables.getStackTraceAsString(e));
+                                        selectionKey.cancel();
+                                    }
                                 }
                             }
                         }
                     }
+                } catch (ClosedSelectorException e) {
+                    return;
+                } catch (IOException e) {
+                    log.error(Throwables.getStackTraceAsString(e));
                 }
             }
-        } catch (ClosedSelectorException e) {
-            return;
         } catch (IOException e) {
             log.error(Throwables.getStackTraceAsString(e));
         }

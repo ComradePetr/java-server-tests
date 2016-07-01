@@ -17,7 +17,7 @@ public class TCPOneConnectionClient extends Client {
     private final Logger log = LogManager.getLogger(this);
 
     @Override
-    public void run() {
+    public void run() throws IOException {
         try (Socket socket = new Socket(Config.serverAddress, Config.SERVER_PORT);
              DataInputStream dataInputStream = new DataInputStream(socket.getInputStream());
              DataOutputStream dataOutputStream = new DataOutputStream(socket.getOutputStream())) {
@@ -25,8 +25,6 @@ public class TCPOneConnectionClient extends Client {
                 sendArray(dataOutputStream);
                 checkArray(receiveArray(dataInputStream));
             }
-        } catch (IOException e) {
-            log.error(Throwables.getStackTraceAsString(e));
         }
     }
 }

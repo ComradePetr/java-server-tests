@@ -43,7 +43,7 @@ public final class ServerTestsMain {
     private static Architecture architecture;
     private static final XYChart<Number, Number> CHARTS[] = new XYChart[3];
 
-    public static void main(String[] args) throws InterruptedException, ExecutionException {
+    public static void main(String[] args) {
         JFrame frame = new JFrame("ServerTests");
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         JPanel jPanel = new JPanel();
@@ -132,6 +132,10 @@ public final class ServerTestsMain {
                     SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(frame,
                             "Unable to connect to server. Check log for details", "Connection error", JOptionPane.ERROR_MESSAGE));
                     LOG.error(Throwables.getStackTraceAsString(e));
+                } catch (InterruptedException e) {
+                    SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(frame,
+                            "Running process was interrupted", "Internal error", JOptionPane.ERROR_MESSAGE));
+                    LOG.error(Throwables.getStackTraceAsString(e));
                 }
             }).start();
         });
@@ -143,7 +147,7 @@ public final class ServerTestsMain {
         CHARTS[id].setData(FXCollections.observableArrayList(new XYChart.Series(name, FXCollections.observableArrayList(data))));
     }
 
-    private static void run(Config.Parameter toChange, int step, int upperBound) throws IOException {
+    private static void run(Config.Parameter toChange, int step, int upperBound) throws IOException, InterruptedException {
         try (PrintWriter description = new PrintWriter("output-description.txt")) {
             description.println(architecture.getName());
             description.println("Start values:");
@@ -175,26 +179,24 @@ public final class ServerTestsMain {
                         return clientTimekeeper.getSum();
                     }));
                     if (architecture.serverType == ServerType.TCPProcess) {
-                        try {
-                            Thread.sleep(Config.NEW_PROCESS_DELAY);
-                        } catch (InterruptedException e) {
-                            LOG.error(Throwables.getStackTraceAsString(e));
-                        }
+                        Thread.sleep(Config.NEW_PROCESS_DELAY);
                     }
                 }
                 taskExecutor.shutdown();
 
                 long sum = 0;
+                int finishedClientsCount = 0;
                 for (int i = 0; i < Config.CLIENTS_COUNT.get(); i++) {
                     try {
                         sum += results.get(i).get();
+                        finishedClientsCount += 1;
                     } catch (InterruptedException | ExecutionException e) {
                         LOG.error(Throwables.getStackTraceAsString(e));
                     }
                 }
 
                 sendToServer(ServerMain.REQUEST_CLOSE);
-                double clientTime = (double) sum / Config.CLIENTS_COUNT.get();
+                double clientTime = (double) sum / finishedClientsCount;
 
                 requestHandleTimes.add(new XYChart.Data<>(changingValue, requestHandleTime));
                 requestHandleFile.printf("%d\t%f\n", changingValue, requestHandleTime);

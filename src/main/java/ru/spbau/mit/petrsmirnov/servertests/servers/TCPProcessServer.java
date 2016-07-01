@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ru.spbau.mit.petrsmirnov.servertests.Config;
 import ru.spbau.mit.petrsmirnov.servertests.ServerMain;
+import ru.spbau.mit.petrsmirnov.servertests.Timekeeper;
 import ru.spbau.mit.petrsmirnov.servertests.architecture.RunnerType;
 
 import java.io.*;
@@ -52,8 +53,8 @@ public class TCPProcessServer extends TCPServer {
                     while (!socket.isClosed()) {
                         try {
                             new ArrayHandler(true).receiveHandleSendArray(dataInputStream, dataOutputStream);
-                        } catch (IOException e) {
-                            return;
+                        } catch (EOFException e) {
+                            break;
                         }
                     }
                 } catch (IOException e) {
@@ -61,14 +62,16 @@ public class TCPProcessServer extends TCPServer {
                 } finally {
                     try {
                         saveTimekeepers();
+                    } catch (IOException e) {
+                        log.error(Throwables.getStackTraceAsString(e));
+                    }
+                    try {
                         socket.close();
                     } catch (IOException e) {
                         log.error(Throwables.getStackTraceAsString(e));
                     }
                 }
             });
-        } catch (SocketException e) {
-            return;
         } catch (IOException | URISyntaxException e) {
             log.error(Throwables.getStackTraceAsString(e));
         } finally {
@@ -101,24 +104,32 @@ public class TCPProcessServer extends TCPServer {
 
     private void loadTimekeepers() {
         requestHandleTime = clientHandleTime = 0.0;
-        double requestHandleTimesSum = 0, clientHandleTimesSum = 0;
-        int count = 0;
         try {
+            double requestHandleTimesSum = 0, clientHandleTimesSum = 0;
+            int requestHandleTimesCount = 0, clientHandleTimesCount = 0;
+
             for (Path filePath : Files.walk(TIMEKEEPERS_DIR).collect(Collectors.toList())) {
                 if (Files.isRegularFile(filePath)) {
                     try (Scanner scanner = new Scanner(filePath)) {
                         double a = scanner.nextDouble(), b = scanner.nextDouble();
-                        requestHandleTimesSum += a;
-                        clientHandleTimesSum += b;
+                        if (a != Timekeeper.NO_FINISHED_TIMEKEEPERS) {
+                            requestHandleTimesSum += a;
+                            ++requestHandleTimesCount;
+                        }
+                        if (b != Timekeeper.NO_FINISHED_TIMEKEEPERS) {
+                            clientHandleTimesSum += b;
+                            ++clientHandleTimesCount;
+                        }
                         log.info("I read from {} : {} {}", filePath.toString(), a, b);
                     }
-                    ++count;
                     filePath.toFile().delete();
                 }
             }
-            if (count > 0) {
-                requestHandleTime = requestHandleTimesSum / count;
-                clientHandleTime = clientHandleTimesSum / count;
+            if (requestHandleTimesCount > 0) {
+                requestHandleTime = requestHandleTimesSum / requestHandleTimesCount;
+            }
+            if (clientHandleTimesCount > 0) {
+                clientHandleTime = clientHandleTimesSum / clientHandleTimesCount;
             }
         } catch (IOException e) {
             log.error(Throwables.getStackTraceAsString(e));

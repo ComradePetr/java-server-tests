@@ -23,7 +23,7 @@ public abstract class Client {
     private final Logger log = LogManager.getLogger(this);
     private final Random rnd = new Random();
 
-    public abstract void run();
+    public abstract void run() throws IOException;
 
     protected void sendArray(DataOutputStream dataOutputStream) throws IOException {
         List<Integer> list = rnd.ints(Config.ARRAY_SIZE.get()).boxed().collect(Collectors.toList());

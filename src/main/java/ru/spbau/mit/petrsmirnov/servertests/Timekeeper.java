@@ -12,9 +12,11 @@ import java.util.ArrayList;
  * 3) посчитать среднее время, измеренное секундомерами, либо сумму их измерений.
  */
 public class Timekeeper {
-    private long sum = 0;
+    public static final double NO_FINISHED_TIMEKEEPERS = -1;
     private final ArrayList<Long> startTime = new ArrayList<>();
     private final Logger log = LogManager.getLogger(this);
+
+    private long sum = 0, finishedCount = 0;
 
     public synchronized int start() {
         startTime.add(System.currentTimeMillis());
@@ -23,6 +25,7 @@ public class Timekeeper {
 
     public synchronized void finish(int id) {
         sum += System.currentTimeMillis() - startTime.get(id);
+        ++finishedCount;
     }
 
     public long getSum() {
@@ -30,6 +33,6 @@ public class Timekeeper {
     }
 
     public double getAverage() {
-        return (double) sum / startTime.size();
+        return finishedCount > 0 ? (double) sum / finishedCount : NO_FINISHED_TIMEKEEPERS;
     }
 }

@@ -8,6 +8,7 @@ import ru.spbau.mit.petrsmirnov.servertests.architecture.RunnerType;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -45,8 +46,8 @@ public class TCPServer extends Server {
                         while (!socket.isClosed()) {
                             try {
                                 new ArrayHandler(true).receiveHandleSendArray(dataInputStream, dataOutputStream);
-                            } catch (IOException e) {
-                                return;
+                            } catch (EOFException e) {
+                                break;
                             }
                         }
                     } catch (IOException e) {
@@ -60,8 +61,6 @@ public class TCPServer extends Server {
                     }
                 });
             }
-        } catch (SocketException e) {
-            return;
         } catch (IOException e) {
             log.error(Throwables.getStackTraceAsString(e));
         } finally {
